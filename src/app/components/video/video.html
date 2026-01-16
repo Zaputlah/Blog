@@ -1,0 +1,283 @@
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Video Player Section -->
+    <section *ngIf="showVideoPlayer && currentVideo" id="video-player" class="mb-8">
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Video Player Header -->
+        <div class="flex justify-between items-center p-4 border-b border-green-100">
+          <div>
+            <h2 class="text-xl font-bold text-green-800">{{ currentVideo.title }}</h2>
+            <p class="text-gray-600 text-sm mt-1">{{ currentVideo.speaker }}</p>
+          </div>
+          <button
+            (click)="closeVideoPlayer()"
+            class="text-gray-500 hover:text-gray-700 text-2xl p-2 hover:bg-gray-100 rounded-full transition duration-200"
+            title="Tutup Video"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- YouTube Embed -->
+        <div class="aspect-video bg-black">
+          <iframe
+            [src]="getVideoUrl(currentVideo.id)"
+            class="w-full h-full"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          >
+          </iframe>
+        </div>
+
+        <!-- Video Info -->
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-4 text-sm text-gray-500">
+              <span>👁️ {{ currentVideo.views }}</span>
+              <span>⏱️ {{ currentVideo.duration }}</span>
+              <span>📅 {{ currentVideo.date }}</span>
+            </div>
+            <button
+              (click)="playVideoInNewTab(currentVideo.id)"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-2"
+            >
+              <span>🔗</span>
+              <span>Buka di YouTube</span>
+            </button>
+          </div>
+          <p class="text-green-700 text-sm bg-green-50 p-3 rounded-lg">
+            💡 <strong>Tips:</strong> Video siap diputar! Klik tombol play pada video di atas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Header Section -->
+    <section class="text-center mb-12" [class.mt-8]="showVideoPlayer">
+      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">🎥 Kajian Video</h1>
+      <p class="text-lg text-green-700 max-w-2xl mx-auto">
+        Kumpulan video kajian lengkap dan konten singkat inspiratif untuk menambah ilmu dan semangat
+        beribadah
+      </p>
+    </section>
+
+    <!-- Content Type Tabs -->
+    <!-- Search and Filter Section -->
+    <section class="mb-8">
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <!-- Filter Buttons -->
+          <div class="flex gap-2 flex-wrap">
+            <button (click)="filterVideos('all')" [class]="getButtonClass('all')">
+              <span>🎬</span>
+              <span>Semua Konten</span>
+            </button>
+            <button (click)="filterVideos('full')" [class]="getButtonClass('full')">
+              <span>📹</span>
+              <span>Ceramah Full</span>
+            </button>
+            <button (click)="filterVideos('short')" [class]="getButtonClass('short')">
+              <span>⚡</span>
+              <span>Ceramah Singkat</span>
+            </button>
+          </div>
+
+          <!-- Search Box -->
+          <div class="flex-1 max-w-md relative">
+            <div class="relative">
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                placeholder="Cari video, ustadz, atau topik..."
+                class="w-full px-4 py-3 pl-10 pr-10 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <!-- Search Icon -->
+              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <!-- Clear Button -->
+              <button
+                *ngIf="searchQuery"
+                (click)="clearSearch()"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition duration-200"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Results Info -->
+        <div *ngIf="searchQuery" class="mt-4 p-3 bg-blue-50 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-blue-700">
+              <span>🔍</span>
+              <span class="font-medium">Hasil pencarian untuk: "{{ searchQuery }}"</span>
+              <span class="text-blue-600 text-sm">({{ searchResultsCount }} video ditemukan)</span>
+            </div>
+            <button
+              (click)="clearSearch()"
+              class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
+            >
+              <span>✕</span>
+              <span>Hapus pencarian</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full Ceramah Section -->
+    <section class="mb-12" *ngIf="filteredFullVideos.length > 0">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-green-800 flex items-center">
+          <span class="mr-2">📹</span> Ceramah Full Length
+        </h2>
+        <span class="text-green-600 font-medium"> {{ filteredFullVideos.length }} video </span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Full Video Items -->
+        <div
+          *ngFor="let video of filteredFullVideos"
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer group"
+          (click)="playVideoInPlace(video)"
+        >
+          <div class="aspect-video bg-gray-900 relative">
+            <img
+              [src]="video.thumbnail"
+              [alt]="video.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+            />
+            <div
+              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+            >
+              <div
+                class="bg-red-600 hover:bg-red-700 w-12 h-12 rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-200"
+              >
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm"
+            >
+              {{ video.duration }}
+            </div>
+            <div
+              class="absolute top-3 left-3 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium"
+            >
+              FULL
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">{{ video.title }}</h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ video.speaker }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <div class="flex items-center space-x-3">
+                <span>👁️ {{ video.views }}</span>
+                <span>📅 {{ video.date }}</span>
+              </div>
+              <button
+                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
+              >
+                <span>▶️</span>
+                <span class="text-xs">Tonton</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Short Ceramah Section -->
+    <section class="mb-12" *ngIf="filteredShortVideos.length > 0">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-green-800 flex items-center">
+          <span class="mr-2">⚡</span> Ceramah Singkat & Reels
+        </h2>
+        <span class="text-green-600 font-medium"> {{ filteredShortVideos.length }} video </span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <!-- Short Video Items -->
+        <div
+          *ngFor="let video of filteredShortVideos"
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 hover:scale-105 cursor-pointer group"
+          (click)="playVideoInPlace(video)"
+        >
+          <div class="aspect-[9/16] bg-gray-900 relative">
+            <img
+              [src]="video.thumbnail"
+              [alt]="video.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+            />
+            <div
+              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+            >
+              <div
+                class="bg-red-600 hover:bg-red-700 w-10 h-10 rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-200"
+              >
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute top-2 left-2 bg-white text-purple-600 px-1 py-0.5 rounded text-xs font-bold"
+            >
+              SHORT
+            </div>
+            <div
+              class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs"
+            >
+              {{ video.duration }}
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold text-green-800 text-sm text-center line-clamp-2">
+              {{ video.title }}
+            </h3>
+            <p class="text-gray-600 text-xs text-center mt-1 line-clamp-1">{{ video.speaker }}</p>
+            <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
+              <span>👁️ {{ video.views }}</span>
+              <span class="text-green-600">▶️</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <section
+      *ngIf="filteredFullVideos.length === 0 && filteredShortVideos.length === 0"
+      class="text-center py-12"
+    >
+      <div class="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
+        <div class="text-6xl mb-4">🎬</div>
+        <h3 class="text-xl font-bold text-green-800 mb-2">Tidak ada video</h3>
+        <p class="text-gray-600 mb-4">Tidak ada video yang sesuai dengan filter yang dipilih.</p>
+        <button
+          (click)="filterVideos('all')"
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
+        >
+          Tampilkan Semua Video
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,368 @@
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Hero Section -->
+    <section class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">
+        🌙 Selamat Datang di Zaputlah
+      </h1>
+      <p class="text-lg text-green-700 max-w-2xl mx-auto">
+        Media dakwah digital berisi konten islami yang menginspirasi dan menyejukkan hati
+      </p>
+    </section>
+
+    <!-- Video Kajian Section -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-green-800 flex items-center">
+          <span class="mr-2">🎥</span> Video Kajian Terbaru
+        </h2>
+        <button
+          (click)="goToVideo()"
+          class="text-green-600 hover:text-green-800 font-medium flex items-center border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition duration-200"
+        >
+          Lihat Semua <span class="ml-1">→</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Video 1 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer"
+          (click)="onVideoClick()"
+        >
+          <div class="aspect-video bg-gray-900 relative">
+            <!-- Thumbnail YouTube -->
+            <img
+              [src]="videos[0].thumbnail"
+              [alt]="videos[0].title"
+              class="w-full h-full object-cover"
+            />
+            <!-- Play Button Overlay -->
+            <div
+              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-200"
+            >
+              <div
+                class="bg-red-600 hover:bg-red-700 w-16 h-16 rounded-full flex items-center justify-center"
+              >
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm"
+            >
+              {{ videos[0].duration }}
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2">{{ videos[0].title }}</h3>
+            <p class="text-gray-600 text-sm mb-3">{{ videos[0].speaker }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 {{ videos[0].date }}</span>
+              <span>👁️ {{ videos[0].views }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video 2 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer"
+          (click)="onVideoClick()"
+        >
+          <div class="aspect-video bg-gray-900 relative">
+            <img
+              [src]="videos[1].thumbnail"
+              [alt]="videos[1].title"
+              class="w-full h-full object-cover"
+            />
+            <div
+              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-200"
+            >
+              <div
+                class="bg-red-600 hover:bg-red-700 w-16 h-16 rounded-full flex items-center justify-center"
+              >
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm"
+            >
+              {{ videos[1].duration }}
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2">{{ videos[1].title }}</h3>
+            <p class="text-gray-600 text-sm mb-3">{{ videos[1].speaker }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 {{ videos[1].date }}</span>
+              <span>👁️ {{ videos[1].views }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video 3 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer"
+          (click)="onVideoClick()"
+        >
+          <div class="aspect-video bg-gray-900 relative">
+            <img
+              [src]="videos[2].thumbnail"
+              [alt]="videos[2].title"
+              class="w-full h-full object-cover"
+            />
+            <div
+              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-200"
+            >
+              <div
+                class="bg-red-600 hover:bg-red-700 w-16 h-16 rounded-full flex items-center justify-center"
+              >
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm"
+            >
+              {{ videos[2].duration }}
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2">{{ videos[2].title }}</h3>
+            <p class="text-gray-600 text-sm mb-3">{{ videos[2].speaker }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 {{ videos[2].date }}</span>
+              <span>👁️ {{ videos[2].views }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Artikel Section -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-green-800 flex items-center">
+          <span class="mr-2">📖</span> Artikel Inspiratif
+        </h2>
+        <button
+          (click)="goToArtikel()"
+          class="text-green-600 hover:text-green-800 font-medium flex items-center border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition duration-200"
+        >
+          Lihat Semua <span class="ml-1">→</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Artikel 1 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
+        >
+          <div
+            class="h-40 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center"
+          >
+            <span class="text-4xl text-white">🕌</span>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">
+              5 Keutamaan Sedekah di Bulan Ramadhan
+            </h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+              Amalan yang pahalanya berlipat ganda di bulan suci...
+            </p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 1 hari lalu</span>
+              <span>⭐ 45</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artikel 2 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
+        >
+          <div
+            class="h-40 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center"
+          >
+            <span class="text-4xl text-white">📚</span>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">
+              Cara Menjaga Hati dari Dosa dan Maksiat
+            </h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+              Tips praktis membersihkan hati agar selalu dekat dengan Allah...
+            </p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 3 hari lalu</span>
+              <span>⭐ 67</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artikel 3 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
+        >
+          <div
+            class="h-40 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center"
+          >
+            <span class="text-4xl text-white">🌙</span>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">
+              Mukjizat Al-Quran dalam Sains Modern
+            </h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+              Bukti-bukti ilmiah yang menguatkan kebenaran Al-Quran...
+            </p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 5 hari lalu</span>
+              <span>⭐ 89</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artikel 4 -->
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
+        >
+          <div
+            class="h-40 bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center"
+          >
+            <span class="text-4xl text-white">🤲</span>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Doa Mustajab di Waktu Sahur</h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+              Waktu mustajab untuk berdoa yang sering terlupakan...
+            </p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>📅 1 minggu lalu</span>
+              <span>⭐ 78</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeri Section - Khusus Konten Permintaan -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-green-800 flex items-center">
+          <span class="mr-2">🖼️</span> Galeri Dakwah
+        </h2>
+        <button
+          (click)="goToPoster()"
+          class="text-green-600 hover:text-green-800 font-medium flex items-center border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition duration-200"
+        >
+          Lihat Semua <span class="ml-1">→</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- 1. Ayat Quran tentang Toleransi -->
+        <div
+          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 cursor-pointer"
+          (click)="goToPoster()"
+        >
+          <div
+            class="h-48 bg-gradient-to-br from-green-300 to-green-500 flex items-center justify-center"
+          >
+            <div class="text-center text-white p-3">
+              <div class="text-xl mb-2">"لَا إِكْرَاهَ فِي الدِّينِ"</div>
+              <p class="text-xs">"Tidak ada paksaan dalam agama"</p>
+              <p class="text-xs mt-1">(QS. Al-Baqarah: 256)</p>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold text-green-800 text-sm text-center">Ayat Quran</h3>
+            <p class="text-gray-600 text-xs text-center mt-1">Toleransi Beragama</p>
+          </div>
+        </div>
+
+        <!-- 2. Doa Sehari-hari -->
+        <div
+          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 cursor-pointer"
+          (click)="goToPoster()"
+        >
+          <div
+            class="h-48 bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center"
+          >
+            <div class="text-center text-white p-3">
+              <div class="text-2xl mb-2">🤲</div>
+              <p class="text-sm font-bold">Doa Masuk Masjid</p>
+              <p class="text-xs mt-2">اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</p>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold text-green-800 text-sm text-center">Doa Sehari-hari</h3>
+            <p class="text-gray-600 text-xs text-center mt-1">Doa Masuk Masjid</p>
+          </div>
+        </div>
+
+        <!-- 3. Sunah Nabi -->
+        <div
+          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 cursor-pointer"
+          (click)="goToPoster()"
+        >
+          <div
+            class="h-48 bg-gradient-to-br from-purple-300 to-purple-500 flex items-center justify-center"
+          >
+            <div class="text-center text-white p-3">
+              <div class="text-2xl mb-2">🌙</div>
+              <p class="text-sm font-bold">Sunah Rawatib</p>
+              <p class="text-xs mt-2">12 Rakaat Shalat Sunah</p>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold text-green-800 text-sm text-center">Sunah Nabi</h3>
+            <p class="text-gray-600 text-xs text-center mt-1">Shalat Rawatib</p>
+          </div>
+        </div>
+
+        <!-- 4. Sikap Nabi terhadap Agama Lain -->
+        <div
+          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 hover:scale-105 cursor-pointer"
+          (click)="goToPoster()"
+        >
+          <div
+            class="h-48 bg-gradient-to-br from-yellow-300 to-yellow-500 flex items-center justify-center"
+          >
+            <div class="text-center text-white p-3">
+              <div class="text-2xl mb-2">🤝</div>
+              <p class="text-sm font-bold">Piagam Madinah</p>
+              <p class="text-xs mt-2">Contoh Toleransi Nabi</p>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-semibold text-green-800 text-sm text-center">Sikap Nabi</h3>
+            <p class="text-gray-600 text-xs text-center mt-1">Terhadap Agama Lain</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center bg-white rounded-2xl shadow-lg p-8 max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-green-800 mb-4">Bergabunglah dengan Komunitas Kami</h2>
+      <p class="text-gray-600 mb-6">Dapatkan update terbaru konten islami langsung ke email Anda</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+        <input
+          type="email"
+          placeholder="Masukkan email Anda"
+          class="flex-1 px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <button
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
+        >
+          Subscribe
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

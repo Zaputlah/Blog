@@ -1,0 +1,76 @@
+/* Custom styles untuk Quran component */
+.container {
+  max-width: 1200px;
+}
+
+/* Smooth transitions untuk semua interactive elements */
+button,
+input {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbar untuk webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* Arabic font styling */
+.font-arabic {
+  font-family: 'Traditional Arabic', 'Scheherazade', 'Lateef', serif;
+  line-height: 2.5;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .font-arabic {
+    font-size: 1.5rem;
+    line-height: 2;
+  }
+}
+
+/* Hover effects untuk surah cards */
+.group:hover {
+  transform: translateY(-2px);
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom styles untuk ayat cards */
+.hover\:transform:hover {
+  transform: translateY(-2px);
+}
+
+.hover\:-translate-y-1:hover {
+  transform: translateY(-4px);
+}
