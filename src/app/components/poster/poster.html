@@ -4,8 +4,7 @@
     <section class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">🖼️ Poster Dakwah</h1>
       <p class="text-lg text-green-700 max-w-2xl mx-auto">
-        Kumpulan poster islami berkualitas tinggi siap download untuk media dakwah dan konten sosial
-        media
+        Kumpulan poster islami berkualitas tinggi siap download untuk media dakwah dan konten sosial media
       </p>
     </section>
 
@@ -18,33 +17,18 @@
               type="text"
               placeholder="Cari poster..."
               class="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              (input)="searchPoster($event)"
             />
           </div>
           <div class="flex gap-2 flex-wrap">
             <button
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
+              *ngFor="let category of categories"
+              [class]="selectedCategory === category 
+                ? 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200'
+                : 'px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200'"
+              (click)="filterByCategory(category)"
             >
-              Semua
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Quote Islami
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Ayat Quran
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Kaligrafi
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Infografis
+              {{ category }}
             </button>
           </div>
         </div>
@@ -53,311 +37,77 @@
 
     <!-- Posters Grid -->
     <section class="mb-12">
+      <!-- Empty State -->
+      <div *ngIf="displayedPosters.length === 0" class="text-center py-12">
+        <div class="text-5xl mb-4">🖼️</div>
+        <h3 class="text-xl font-bold text-gray-700 mb-2">Tidak ada poster ditemukan</h3>
+        <p class="text-gray-600">Coba kata kunci lain atau pilih kategori berbeda</p>
+      </div>
+      
+      <!-- Posters Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Poster 1 -->
+        <!-- Poster Card -->
         <div
+          *ngFor="let poster of displayedPosters"
           class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
         >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">🌙</div>
-              <h3 class="text-lg font-bold mb-2">Keutamaan Ramadhan</h3>
-              <p class="text-sm">Bulan Penuh Berkah</p>
+          <!-- Image Section -->
+          <div class="aspect-[6/12] relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-300">
+            <!-- Gambar dari public/img -->
+            <img
+              [src]="poster.imageUrl"
+              [alt]="poster.title"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              (error)="handleImageError($event, poster)"
+            />
+            
+            <!-- Category Badge -->
+            <div class="absolute top-4 left-4">
+              <span
+                class="px-3 py-1 rounded-full text-xs font-medium shadow-sm"
+                [ngClass]="getCategoryBadgeClass(poster.category)"
+              >
+                {{ poster.category }}
+              </span>
             </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
+            
+            <!-- Overlay untuk hover effect -->
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
+            
+            <!-- Favorite Button -->
+            <button
+              class="absolute top-4 right-4 bg-white/90 text-gray-700 p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-white hover:text-yellow-500"
+              (click)="toggleFavorite(poster); $event.stopPropagation()"
             >
               ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Infografis
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Keutamaan Ramadhan</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
+            </button>
+            
+            <!-- Download Button Overlay -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/40">
               <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition duration-200"
+                (click)="downloadPoster(poster); $event.stopPropagation()"
               >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
+                <span class="text-lg">📥</span>
+                <span>Download</span>
               </button>
             </div>
           </div>
-        </div>
-
-        <!-- Poster 2 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">📖</div>
-              <h3 class="text-lg font-bold mb-2">"Bacalah Dengan Nama Tuhanmu"</h3>
-              <p class="text-xs">QS. Al-Alaq: 1</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
+          
+          <!-- Info Section -->
           <div class="p-4">
-            <span
-              class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Ayat Quran
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Ayat Al-Alaq</h3>
+            <h3 class="font-bold text-green-800 mb-2 line-clamp-2 text-lg">{{ poster.title }}</h3>
+            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ poster.description }}</p>
+            
             <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
+              <div class="flex items-center space-x-2">
+                <span class="bg-gray-100 px-2 py-1 rounded text-xs">A4</span>
+                <span class="bg-gray-100 px-2 py-1 rounded text-xs">300DPI</span>
+                <span class="bg-gray-100 px-2 py-1 rounded text-xs">PNG</span>
               </div>
               <button
                 class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 3 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-5xl mb-4">ﷲ</div>
-              <h3 class="text-lg font-bold mb-2">Kaligrafi Allah</h3>
-              <p class="text-sm">Design Modern</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Kaligrafi
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Kaligrafi Asmaul Husna</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 4 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">🤲</div>
-              <h3 class="text-lg font-bold mb-2">"Senyummu di hadapan saudaramu adalah sedekah"</h3>
-              <p class="text-xs">HR. Tirmidzi</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Quote Islami
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Hadits Sedekah</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 5 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">❤️</div>
-              <h3 class="text-lg font-bold mb-2">5 Rukun Islam</h3>
-              <p class="text-sm">Infografis Edukatif</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Infografis
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Infografis Rukun Islam</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 6 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">🕋</div>
-              <h3 class="text-lg font-bold mb-2">Keindahan Masjidil Haram</h3>
-              <p class="text-sm">Design Landscape</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Kaligrafi
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Masjidil Haram</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 7 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">🌅</div>
-              <h3 class="text-lg font-bold mb-2">Doa Pagi Hari</h3>
-              <p class="text-sm">Bismillahilladzi...</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-teal-100 text-teal-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Quote Islami
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Doa Pagi</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Poster 8 -->
-        <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <div
-            class="aspect-[3/4] bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center p-6 relative"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-4">⭐</div>
-              <h3 class="text-lg font-bold mb-2">99 Asmaul Husna</h3>
-              <p class="text-sm">Design Minimalis</p>
-            </div>
-            <div
-              class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
-            >
-              ⭐
-            </div>
-          </div>
-          <div class="p-4">
-            <span
-              class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-medium mb-2 inline-block"
-            >
-              Infografis
-            </span>
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">Poster Asmaul Husna</h3>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div>
-                <span class="text-xs">A4 • 300DPI</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
+                (click)="downloadPoster(poster)"
               >
                 <span>📥</span>
                 <span class="text-xs">Download</span>
@@ -399,9 +149,10 @@
     </section>
 
     <!-- Load More Button -->
-    <section class="text-center">
+    <section *ngIf="displayedPosters.length < allPosters.length && displayedPosters.length > 0" class="text-center">
       <button
         class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition duration-200 shadow-lg"
+        (click)="loadMore()"
       >
         Muat Lebih Banyak Poster
       </button>
