@@ -8,7 +8,8 @@ import { Quran } from './components/quran/quran';
 export const routes: Routes = [
   { path: '', redirectTo: 'beranda', pathMatch: 'full' },
   { path: 'beranda', component: Beranda },
-  { path: 'video', component: Video },
+  { path: 'kajian', component: Video },
+  { path: 'video', redirectTo: 'kajian', pathMatch: 'full' },
   { path: 'artikel', component: Artikel },
   { path: 'poster', component: PosterComponent },
   { path: 'quran', component: Quran },

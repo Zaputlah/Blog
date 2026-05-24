@@ -45,7 +45,7 @@ export class Beranda {
 
   // Method untuk navigasi manual
   goToVideo() {
-    this.router.navigate(['/video']);
+    this.router.navigate(['/kajian']);
   }
 
   goToArtikel() {

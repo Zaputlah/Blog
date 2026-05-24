@@ -1,336 +1,173 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
-  <div class="container mx-auto px-4">
-    <!-- Header Section -->
-    <section class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">📖 Artikel Islami</h1>
-      <p class="text-lg text-green-700 max-w-2xl mx-auto">
-        Kumpulan artikel kajian Islam yang mendalam dan inspiratif untuk menambah wawasan keislaman
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Artikel</p>
+      <h1>Artikel Zulhijah</h1>
+      <p>
+        Kumpulan tulisan seputar sepuluh hari pertama Zulhijah, Puasa Arafah, Idul Adha, kurban,
+        Hari Tasyrik, dan dzikir. Tanggal mengikuti Zulhijah 1447 H/2026 M.
       </p>
     </section>
 
-    <!-- Search and Filter -->
     <section class="mb-8">
-      <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div class="flex-1 w-full">
-            <input
-              type="text"
-              placeholder="Cari artikel..."
-              class="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div class="flex gap-2 flex-wrap">
+      <div class="soft-panel p-5 md:p-6">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <input
+            type="text"
+            placeholder="Cari artikel Zulhijah..."
+            class="input-field md:max-w-sm"
+            (input)="onSearchChange($event)"
+          />
+          <div class="flex flex-wrap gap-2">
             <button
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
+              *ngFor="let category of categories"
+              [class]="getCategoryButtonClass(category)"
+              (click)="selectCategory(category)"
             >
-              Semua
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Akidah
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Fiqih
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Akhlak
-            </button>
-            <button
-              class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200"
-            >
-              Sejarah
+              {{ category }}
             </button>
           </div>
         </div>
+
+        <p class="mt-4 text-sm leading-6 text-[#5f6f6a]">
+          Catatan: penanggalan Hijriah dapat mengikuti ketetapan resmi pemerintah atau lembaga
+          setempat.
+        </p>
       </div>
     </section>
 
-    <!-- Featured Article -->
-    <section class="mb-12">
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="md:flex">
-          <div class="md:w-2/3 p-8">
-            <span
-              class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4 inline-block"
-            >
-              Featured
-            </span>
-            <h2 class="text-3xl font-bold text-green-800 mb-4">
-              Keutamaan Sedekah di Bulan Ramadhan
+    <section class="mb-10">
+      <article class="content-card">
+        <div class="grid gap-0 md:grid-cols-[1.7fr_1fr]">
+          <div class="p-6 md:p-8">
+            <span class="badge">Artikel Pilihan</span>
+            <h2 class="mt-4 text-2xl font-extrabold leading-tight text-[#123d34] md:text-3xl">
+              {{ featuredArticle.title }}
             </h2>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              Sedekah di bulan Ramadhan memiliki keutamaan yang sangat besar. Setiap kebaikan yang
-              dilakukan akan dilipatgandakan pahalanya oleh Allah SWT. Artikel ini membahas secara
-              mendalam tentang berbagai keutamaan sedekah dan bagaimana memaksimalkan ibadah di
-              bulan suci...
+            <p class="mt-4 max-w-3xl leading-8 text-[#5f6f6a]">
+              {{ featuredArticle.excerpt }}
             </p>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2 text-gray-500">
-                  <span>📅</span>
-                  <span>2 hari lalu</span>
-                </div>
-                <div class="flex items-center space-x-2 text-gray-500">
-                  <span>⏱️</span>
-                  <span>5 min read</span>
-                </div>
-                <div class="flex items-center space-x-2 text-gray-500">
-                  <span>⭐</span>
-                  <span>128 likes</span>
-                </div>
+            <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex flex-wrap gap-3 meta-text">
+                <span>{{ featuredArticle.hijriDate }}</span>
+                <span>{{ featuredArticle.gregorianDate }}</span>
+                <span>{{ featuredArticle.readTime }}</span>
+                <span>{{ getClickCount(featuredArticle.id) }} klik</span>
+                <span>{{ featuredArticle.sources.length }} dalil</span>
               </div>
-              <button
-                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
-              >
+              <button class="primary-button self-start sm:self-auto" (click)="openArticle(featuredArticle)">
                 Baca Selengkapnya
               </button>
             </div>
           </div>
-          <div
-            class="md:w-1/3 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center p-8"
-          >
-            <div class="text-white text-center">
-              <div class="text-6xl mb-4">🕌</div>
-              <p class="text-xl font-bold">Artikel Pilihan</p>
+
+          <div class="quiet-block flex items-center p-6 md:p-8">
+            <div>
+              <p class="eyebrow">Zulhijah 1447 H</p>
+              <p class="mt-3 text-2xl font-extrabold leading-snug text-[#123d34]">
+                18 Mei sampai 30 Mei 2026 memuat hari-hari utama untuk amal, Arafah, Idul Adha,
+                dan Tasyrik.
+              </p>
             </div>
           </div>
         </div>
-      </div>
+      </article>
     </section>
 
-    <!-- Articles Grid -->
+    <section *ngIf="selectedArticle" id="artikel-detail" class="mb-10">
+      <article class="soft-panel p-6 md:p-8">
+        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <span class="badge">{{ selectedArticle.category }}</span>
+            <h2 class="mt-4 text-2xl font-extrabold leading-tight text-[#123d34] md:text-4xl">
+              {{ selectedArticle.title }}
+            </h2>
+            <div class="mt-4 flex flex-wrap gap-3 meta-text">
+              <span>{{ selectedArticle.hijriDate }}</span>
+              <span>{{ selectedArticle.gregorianDate }}</span>
+              <span>{{ selectedArticle.readTime }}</span>
+              <span>{{ getClickCount(selectedArticle.id) }} klik</span>
+            </div>
+          </div>
+
+          <button class="secondary-button self-start" (click)="closeArticle()">Tutup</button>
+        </div>
+
+        <div class="mt-7 space-y-5">
+          <p
+            *ngFor="let paragraph of selectedArticle.content"
+            class="text-base leading-8 text-[#34433f]"
+          >
+            {{ paragraph }}
+          </p>
+        </div>
+
+        <div class="mt-8 border-t border-[#dfe8e3] pt-6">
+          <h3 class="text-lg font-extrabold text-[#123d34]">Rujukan Dalil dan Ulama</h3>
+          <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">
+            Rujukan diarahkan ke tafsir dan fatwa ulama, terutama sumber Saudi seperti Tafsir KSU,
+            Syaikh Bin Baz, dan Syaikh Ibnu Utsaimin.
+          </p>
+
+          <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <a
+              *ngFor="let source of selectedArticle.sources"
+              [href]="source.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg border border-[#dfe8e3] bg-white p-4 transition hover:border-[#1f6f5b]/40 hover:bg-[#fbfcfb]"
+            >
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="badge">{{ source.type }}</span>
+                <span class="text-sm font-extrabold text-[#123d34]">{{ source.reference }}</span>
+              </div>
+              <p class="mt-3 text-sm leading-6 text-[#5f6f6a]">
+                {{ source.note }}
+              </p>
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
     <section class="mb-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Article 1 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">📚</div>
-              <p class="text-sm font-bold">Kajian Akidah</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                Akidah
-              </span>
-              <span class="text-gray-500 text-sm">📅 1 hari lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Memahami Konsep Tauhid dalam Islam
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Tauhid adalah fondasi utama dalam Islam. Artikel ini membahas tiga jenis tauhid:
-              rububiyah, uluhiyah, dan asma wa sifat...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 7 min</span>
-                <span>⭐ 89</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Article 2 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">🤲</div>
-              <p class="text-sm font-bold">Kajian Fiqih</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">
-                Fiqih
-              </span>
-              <span class="text-gray-500 text-sm">📅 3 hari lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Tata Cara Shalat Jenazah yang Benar
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Panduan lengkap shalat jenazah mulai dari niat, tata cara, hingga doa-doa yang dibaca.
-              Sesuai sunnah Nabi Muhammad SAW...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 10 min</span>
-                <span>⭐ 67</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Article 3 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">❤️</div>
-              <p class="text-sm font-bold">Kajian Akhlak</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
-                Akhlak
-              </span>
-              <span class="text-gray-500 text-sm">📅 5 hari lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Meneladani Akhlak Rasulullah dalam Bermasyarakat
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Bagaimana Rasulullah berinteraksi dengan tetangga, saudara, dan masyarakat luas.
-              Contoh-contoh praktis dalam kehidupan...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 8 min</span>
-                <span>⭐ 112</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Article 4 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">🌙</div>
-              <p class="text-sm font-bold">Kisah Inspiratif</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                Sejarah
-              </span>
-              <span class="text-gray-500 text-sm">📅 1 minggu lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Kisah Heroik Perang Badar: Mukjizat dari Langit
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Analisis mendalam tentang strategi perang Badar dan mukjizat yang diberikan Allah
-              kepada kaum muslimin yang berjumlah sedikit...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 12 min</span>
-                <span>⭐ 156</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Article 5 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">🕌</div>
-              <p class="text-sm font-bold">Kajian Kontemporer</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
-                Fiqih
-              </span>
-              <span class="text-gray-500 text-sm">📅 2 minggu lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Hukum Investasi Crypto dalam Pandangan Islam
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Analisis mendalam tentang cryptocurrency dari sudut pandang fiqih muamalah. Apakah
-              halal atau haram? Simak penjelasannya...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 15 min</span>
-                <span>⭐ 203</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Article 6 -->
-        <div
-          class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
-        >
-          <div
-            class="h-48 bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center"
-          >
-            <div class="text-white text-center">
-              <div class="text-4xl mb-2">📖</div>
-              <p class="text-sm font-bold">Tafsir Al-Quran</p>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs font-medium">
-                Akidah
-              </span>
-              <span class="text-gray-500 text-sm">📅 3 minggu lalu</span>
-            </div>
-            <h3 class="font-bold text-green-800 text-xl mb-3 line-clamp-2">
-              Tafsir Surat Al-Kahfi: Pelajaran di Balik Kisah Ashhabul Kahfi
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">
-              Mengungkap hikmah dan pelajaran dari kisah pemuda kahfi yang tertidur selama 309 tahun
-              dalam gua...
-            </p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center space-x-4">
-                <span>⏱️ 20 min</span>
-                <span>⭐ 178</span>
-              </div>
-              <button class="text-green-600 hover:text-green-800 font-medium">Baca →</button>
-            </div>
-          </div>
-        </div>
+      <div *ngIf="filteredArticles.length === 0" class="soft-panel p-8 text-center">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Artikel tidak ditemukan</h3>
+        <p class="mt-2 text-[#5f6f6a]">Coba kata kunci atau kategori lain.</p>
       </div>
-    </section>
 
-    <!-- Load More Button -->
-    <section class="text-center">
-      <button
-        class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition duration-200 shadow-lg"
-      >
-        Muat Lebih Banyak Artikel
-      </button>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <article *ngFor="let article of filteredArticles" class="content-card">
+          <div class="quiet-block p-5">
+            <span class="badge">{{ article.category }}</span>
+          </div>
+
+          <div class="p-6">
+            <div class="mb-3 flex flex-wrap gap-3 meta-text">
+              <span>{{ article.hijriDate }}</span>
+              <span>{{ article.gregorianDate }}</span>
+            </div>
+
+            <h3 class="line-clamp-2 text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ article.title }}
+            </h3>
+            <p class="mt-3 line-clamp-3 leading-7 text-[#5f6f6a]">
+              {{ article.excerpt }}
+            </p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-3 meta-text">
+                <span>{{ article.readTime }}</span>
+                <span>{{ getClickCount(article.id) }} klik</span>
+                <span>{{ article.sources.length }} dalil</span>
+              </div>
+              <button class="text-sm font-extrabold text-[#1f6f5b]" (click)="openArticle(article)">
+                Baca Artikel
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
     </section>
   </div>
 </div>

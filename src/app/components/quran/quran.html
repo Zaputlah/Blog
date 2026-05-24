@@ -1,40 +1,38 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
-  <div class="container mx-auto px-4">
-    <!-- HEADER UNTUK LIST SURAH -->
-    <section *ngIf="currentView === 'list'" class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">📖 Daftar Surah Al-Qur'an</h1>
-      <p class="text-lg text-green-700 max-w-2xl mx-auto">
-        Kumpulan lengkap 114 surah dalam Al-Qur'an dengan terjemahan dan informasi lengkap
+<div class="page-shell">
+  <div class="page-container">
+    <section *ngIf="currentView === 'list'" class="page-intro">
+      <p class="eyebrow">Al-Quran</p>
+      <h1>Daftar Surah Al-Quran</h1>
+      <p>
+        Kumpulan 114 surah dengan terjemahan dan informasi ringkas, disajikan sederhana agar nyaman
+        untuk dibaca.
       </p>
     </section>
 
-    <!-- HEADER UNTUK BACA SURAH -->
-    <section *ngIf="currentView === 'read' && surahDetail" class="text-center mb-8">
-      <button
-        (click)="kembaliKeDaftar()"
-        class="mb-4 flex items-center text-green-600 hover:text-green-800 font-medium"
-      >
-        ← Kembali ke Daftar Surah
+    <section *ngIf="currentView === 'read' && surahDetail" class="mb-8">
+      <button (click)="kembaliKeDaftar()" class="secondary-button mb-5">
+        Kembali ke Daftar Surah
       </button>
-      <h1 class="text-3xl md:text-4xl font-bold text-green-800 mb-2">
-        {{ surahDetail.nomor }}. {{ surahDetail.namaLatin }}
-      </h1>
-      <p class="text-lg text-green-700">{{ surahDetail.arti }}</p>
-      <div class="flex justify-center gap-4 mt-2 text-sm text-gray-600">
-        <span>{{ surahDetail.jumlahAyat }} Ayat</span>
-        <span>•</span>
-        <span>{{ getTempatTurunDisplay(surahDetail.tempatTurun) }}</span>
+      <div class="text-center">
+        <p class="eyebrow">Surah {{ surahDetail.nomor }}</p>
+        <h1 class="mt-2 text-3xl font-extrabold text-[#123d34] md:text-5xl">
+          {{ surahDetail.namaLatin }}
+        </h1>
+        <p class="mt-3 text-lg text-[#5f6f6a]">{{ surahDetail.arti }}</p>
+        <div class="mt-3 flex justify-center gap-3 text-sm font-semibold text-[#71817c]">
+          <span>{{ surahDetail.jumlahAyat }} ayat</span>
+          <span>|</span>
+          <span>{{ getTempatTurunDisplay(surahDetail.tempatTurun) }}</span>
+        </div>
       </div>
     </section>
 
-    <!-- ERROR MESSAGE -->
-    <div *ngIf="error" class="flex justify-center items-center py-12">
-      <div class="bg-white rounded-2xl shadow-lg p-8 text-center max-w-md w-full">
-        <div class="text-4xl mb-4">⚠️</div>
-        <h3 class="text-xl font-bold text-red-600 mb-2">Terjadi Kesalahan</h3>
-        <p class="text-gray-600">{{ error }}</p>
+    <div *ngIf="error" class="flex justify-center py-12">
+      <div class="soft-panel w-full max-w-md p-8 text-center">
+        <h3 class="text-xl font-extrabold text-red-700">Terjadi Kesalahan</h3>
+        <p class="mt-2 leading-7 text-[#5f6f6a]">{{ error }}</p>
         <button
-          class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200"
+          class="primary-button mt-5"
           (click)="currentView === 'list' ? loadSurah() : kembaliKeDaftar()"
         >
           {{ currentView === 'list' ? 'Coba Lagi' : 'Kembali' }}
@@ -42,234 +40,208 @@
       </div>
     </div>
 
-    <!-- LOADING DETAIL SURAH -->
-    <div *ngIf="loadingDetail" class="flex justify-center items-center py-12">
-      <div class="bg-white rounded-2xl shadow-lg p-8 text-center max-w-md w-full">
-        <div class="text-4xl mb-4 animate-pulse">📖</div>
-        <h3 class="text-xl font-bold text-green-800 mb-2">Memuat Surah</h3>
-        <p class="text-gray-600">Mohon tunggu sebentar...</p>
+    <div *ngIf="loadingDetail && currentView === 'read'" class="flex justify-center py-12">
+      <div class="soft-panel w-full max-w-md p-8 text-center">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Memuat Surah</h3>
+        <p class="mt-2 text-[#5f6f6a]">Mohon tunggu sebentar...</p>
       </div>
     </div>
 
-    <!-- LIST SURAH -->
+    <div *ngIf="detailError" class="mb-6">
+      <div class="soft-panel p-5 md:p-6">
+        <h3 class="text-lg font-extrabold text-[#123d34]">Surah belum bisa dibuka</h3>
+        <p class="mt-2 leading-7 text-[#5f6f6a]">{{ detailError }}</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button class="primary-button" (click)="retryLastSurah()">Coba Lagi</button>
+          <button class="secondary-button" (click)="kembaliKeDaftar()">Kembali ke Daftar</button>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="currentView === 'list' && !error">
-      <!-- Filter Section -->
       <section class="mb-8">
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-          <!-- Search Input -->
-          <div class="mb-6">
+        <div class="soft-panel p-5 md:p-6">
+          <div class="mb-5">
             <input
               type="text"
-              placeholder="Cari surah berdasarkan nama latin, arti, atau nama arab..."
-              class="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Cari surah berdasarkan nama latin, arti, atau nama Arab..."
+              class="input-field"
               (input)="onSearchChange($event)"
               [value]="searchTerm"
             />
           </div>
 
-          <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <!-- Tempat Turun Filter -->
-            <div class="flex gap-2 flex-wrap">
-              <span class="text-green-800 font-medium mr-2">Tempat Turun:</span>
-              <button
-                [class]="getFilterButtonClass(tempatTurunFilter === 'all')"
-                (click)="onTempatTurunFilterChange('all')"
-              >
-                Semua
-              </button>
-              <button
-                [class]="getFilterButtonClass(tempatTurunFilter === 'Mekah')"
-                (click)="onTempatTurunFilterChange('Mekah')"
-              >
-                Makkiyah
-              </button>
-              <button
-                [class]="getFilterButtonClass(tempatTurunFilter === 'Madinah')"
-                (click)="onTempatTurunFilterChange('Madinah')"
-              >
-                Madaniyah
-              </button>
+          <div class="grid gap-5 lg:grid-cols-2">
+            <div>
+              <p class="mb-2 text-sm font-extrabold text-[#123d34]">Tempat Turun</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  [class]="getFilterButtonClass(tempatTurunFilter === 'all')"
+                  (click)="onTempatTurunFilterChange('all')"
+                >
+                  Semua
+                </button>
+                <button
+                  [class]="getFilterButtonClass(tempatTurunFilter === 'Mekah')"
+                  (click)="onTempatTurunFilterChange('Mekah')"
+                >
+                  Makkiyah
+                </button>
+                <button
+                  [class]="getFilterButtonClass(tempatTurunFilter === 'Madinah')"
+                  (click)="onTempatTurunFilterChange('Madinah')"
+                >
+                  Madaniyah
+                </button>
+              </div>
             </div>
 
-            <!-- Ayat Length Filter -->
-            <div class="flex gap-2 flex-wrap">
-              <span class="text-green-800 font-medium mr-2">Panjang Ayat:</span>
-              <button
-                [class]="getFilterButtonClass(ayatLengthFilter === 'all')"
-                (click)="onAyatLengthFilterChange('all')"
-              >
-                Semua
-              </button>
-              <button
-                [class]="getFilterButtonClass(ayatLengthFilter === 'pendek')"
-                (click)="onAyatLengthFilterChange('pendek')"
-              >
-                Pendek (≤50 ayat)
-              </button>
-              <button
-                [class]="getFilterButtonClass(ayatLengthFilter === 'sedang')"
-                (click)="onAyatLengthFilterChange('sedang')"
-              >
-                Sedang (51-100 ayat)
-              </button>
-              <button
-                [class]="getFilterButtonClass(ayatLengthFilter === 'panjang')"
-                (click)="onAyatLengthFilterChange('panjang')"
-              >
-                Panjang (>100 ayat)
-              </button>
+            <div>
+              <p class="mb-2 text-sm font-extrabold text-[#123d34]">Panjang Ayat</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  [class]="getFilterButtonClass(ayatLengthFilter === 'all')"
+                  (click)="onAyatLengthFilterChange('all')"
+                >
+                  Semua
+                </button>
+                <button
+                  [class]="getFilterButtonClass(ayatLengthFilter === 'pendek')"
+                  (click)="onAyatLengthFilterChange('pendek')"
+                >
+                  Pendek
+                </button>
+                <button
+                  [class]="getFilterButtonClass(ayatLengthFilter === 'sedang')"
+                  (click)="onAyatLengthFilterChange('sedang')"
+                >
+                  Sedang
+                </button>
+                <button
+                  [class]="getFilterButtonClass(ayatLengthFilter === 'panjang')"
+                  (click)="onAyatLengthFilterChange('panjang')"
+                >
+                  Panjang
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="mt-4 text-sm text-green-700">
+          <p class="mt-5 text-sm font-semibold text-[#5f6f6a]">
             Menampilkan {{ filteredSurahList.length }} dari {{ surahList.length }} surah
-          </div>
+          </p>
         </div>
       </section>
 
-      <!-- Surah Grid -->
       <section class="mb-12">
-        <div *ngIf="filteredSurahList.length === 0" class="text-center py-12">
-          <div class="bg-white rounded-2xl shadow-lg p-8 max-w-md mx-auto">
-            <div class="text-4xl mb-4">🔍</div>
-            <h3 class="text-xl font-bold text-green-800 mb-2">Tidak ada hasil</h3>
-            <p class="text-gray-600">Coba ubah filter pencarian Anda</p>
+        <div *ngIf="filteredSurahList.length === 0" class="py-12 text-center">
+          <div class="soft-panel mx-auto max-w-md p-8">
+            <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada hasil</h3>
+            <p class="mt-2 text-[#5f6f6a]">Coba ubah filter pencarian Anda.</p>
           </div>
         </div>
 
         <div
           *ngIf="filteredSurahList.length > 0"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
-          <div
-            class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group hover:transform hover:-translate-y-1"
-            *ngFor="let s of filteredSurahList; trackBy: trackSurah"
-          >
-            <div
-              class="aspect-[4/3] bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center p-6 relative"
-            >
-              <div class="text-white text-center">
-                <div class="text-4xl mb-4">📖</div>
-                <h3 class="text-lg font-bold mb-2">{{ s.nomor }}. {{ s.namaLatin }}</h3>
-                <p class="text-sm">{{ getTempatTurunDisplay(s.tempatTurun) }}</p>
-                <p class="text-xs mt-1">{{ s.jumlahAyat }} ayat</p>
-              </div>
+          <article class="content-card" *ngFor="let s of filteredSurahList; trackBy: trackSurah">
+            <div class="quiet-block p-5 text-right">
+              <p class="font-arabic text-3xl text-[#123d34]">{{ s.nama }}</p>
             </div>
 
-            <div class="p-4">
-              <div class="flex justify-between items-start mb-2">
-                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                  {{ s.jumlahAyat }} Ayat
-                </span>
-                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                  {{ getTempatTurunDisplay(s.tempatTurun) }}
-                </span>
+            <div class="p-5">
+              <div class="mb-4 flex flex-wrap gap-2">
+                <span class="badge">{{ s.jumlahAyat }} ayat</span>
+                <span class="badge">{{ getTempatTurunDisplay(s.tempatTurun) }}</span>
               </div>
 
-              <h3 class="font-bold text-green-800 mb-2 text-right text-lg">
-                {{ s.nama }}
+              <h3 class="text-lg font-extrabold text-[#123d34]">
+                {{ s.nomor }}. {{ s.namaLatin }}
               </h3>
+              <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">{{ s.arti }}</p>
 
-              <p class="text-gray-600 text-sm mb-3">{{ s.arti }}</p>
-
-              <div class="flex justify-between items-center text-sm text-gray-500">
-                <span class="text-xs">Surah ke-{{ s.nomor }}</span>
-
-                <!-- TOMBOL BACA -->
+              <div class="mt-5 flex items-center justify-between gap-3">
+                <span class="meta-text">Surah ke-{{ s.nomor }}</span>
                 <button
-                  class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg font-medium flex items-center space-x-1 transition duration-200"
+                  class="primary-button px-4 py-2 text-sm disabled:cursor-wait disabled:opacity-70"
+                  [disabled]="loadingSurahId === s.nomor"
                   (click)="bacaSurah(s.nomor)"
                 >
-                  <span>📖</span>
-                  <span class="text-xs">Baca</span>
+                  {{ loadingSurahId === s.nomor ? 'Memuat...' : 'Baca' }}
                 </button>
               </div>
             </div>
-          </div>
+          </article>
         </div>
       </section>
     </div>
 
-    <!-- DETAIL SURAH -->
     <div *ngIf="currentView === 'read' && surahDetail && !loadingDetail && !error">
-      <!-- Navigation Controls -->
-      <div class="flex justify-between items-center mb-6">
+      <div class="mb-6 flex items-center justify-between gap-4">
         <button
           *ngIf="selectedSurah && selectedSurah.nomor > 1"
           (click)="previousSurah()"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition duration-200"
+          class="secondary-button"
         >
-          <span>←</span>
-          <span>Sebelumnya</span>
+          Sebelumnya
         </button>
         <div *ngIf="!(selectedSurah && selectedSurah.nomor > 1)"></div>
 
         <button
           *ngIf="selectedSurah && selectedSurah.nomor < surahList.length"
           (click)="nextSurah()"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition duration-200"
+          class="secondary-button"
         >
-          <span>Selanjutnya</span>
-          <span>→</span>
+          Selanjutnya
         </button>
       </div>
 
-      <!-- Deskripsi Surah -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-        <h3 class="text-xl font-bold text-green-800 mb-4">Deskripsi Surah</h3>
-        <p class="text-gray-700 leading-relaxed">{{ surahDetail.deskripsi }}</p>
-      </div>
+      <section class="soft-panel mb-6 p-6 md:p-8">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Deskripsi Surah</h3>
+        <p class="mt-3 leading-8 text-[#5f6f6a]">{{ surahDetail.deskripsi }}</p>
+      </section>
 
-      <!-- Daftar Ayat -->
-      <div class="space-y-4">
-        <div
-          *ngFor="let ayat of surahDetail.ayat; trackBy: trackAyat"
-          class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-200"
-        >
-          <div class="flex items-start justify-between mb-4">
-            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-              Ayat {{ ayat.nomorAyat }}
-            </span>
+      <section class="space-y-4">
+        <article *ngFor="let ayat of surahDetail.ayat; trackBy: trackAyat" class="content-card p-6 md:p-8">
+          <div class="mb-5 flex items-center justify-between">
+            <span class="badge">Ayat {{ ayat.nomorAyat }}</span>
           </div>
 
-          <div class="space-y-4">
-            <!-- Teks Arab -->
+          <div class="space-y-5">
             <div class="text-right">
-              <p class="text-2xl font-arabic leading-loose">{{ ayat.teksArab }}</p>
+              <p class="font-arabic text-3xl leading-loose text-[#17211f] md:text-4xl">
+                {{ ayat.teksArab }}
+              </p>
             </div>
 
-            <!-- Teks Latin -->
-            <div class="border-l-4 border-green-500 pl-4">
-              <p class="text-gray-600 italic">{{ ayat.teksLatin }}</p>
+            <div class="border-l-4 border-[#1f6f5b] pl-4">
+              <p class="italic leading-7 text-[#5f6f6a]">{{ ayat.teksLatin }}</p>
             </div>
 
-            <!-- Terjemahan -->
-            <div class="bg-gray-50 rounded-lg p-4">
-              <p class="text-gray-700 leading-relaxed">{{ ayat.teksIndonesia }}</p>
+            <div class="rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-4">
+              <p class="leading-8 text-[#17211f]">{{ ayat.teksIndonesia }}</p>
             </div>
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
-      <!-- Navigation Controls Bottom -->
-      <div class="flex justify-between items-center mt-8">
+      <div class="mt-8 flex items-center justify-between gap-4">
         <button
           *ngIf="selectedSurah && selectedSurah.nomor > 1"
           (click)="previousSurah()"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition duration-200"
+          class="secondary-button"
         >
-          <span>←</span>
-          <span>Surah Sebelumnya</span>
+          Surah Sebelumnya
         </button>
         <div *ngIf="!(selectedSurah && selectedSurah.nomor > 1)"></div>
 
         <button
           *ngIf="selectedSurah && selectedSurah.nomor < surahList.length"
           (click)="nextSurah()"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition duration-200"
+          class="secondary-button"
         >
-          <span>Surah Selanjutnya</span>
-          <span>→</span>
+          Surah Selanjutnya
         </button>
       </div>
     </div>

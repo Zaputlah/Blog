@@ -1,31 +1,27 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
-  <div class="container mx-auto px-4">
-    <!-- Header Section -->
-    <section class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">🖼️ Poster Dakwah</h1>
-      <p class="text-lg text-green-700 max-w-2xl mx-auto">
-        Kumpulan poster islami berkualitas tinggi siap download untuk media dakwah dan konten sosial media
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Poster</p>
+      <h1>Poster Dakwah</h1>
+      <p>
+        Kumpulan materi visual dakwah yang bisa digunakan untuk media sosial, bahan kajian, atau
+        publikasi komunitas dengan tampilan yang lebih rapi.
       </p>
     </section>
 
-    <!-- Filter Categories -->
     <section class="mb-8">
-      <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div class="flex-1 w-full">
-            <input
-              type="text"
-              placeholder="Cari poster..."
-              class="w-full px-4 py-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              (input)="searchPoster($event)"
-            />
-          </div>
-          <div class="flex gap-2 flex-wrap">
+      <div class="soft-panel p-5 md:p-6">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <input
+            type="text"
+            placeholder="Cari poster..."
+            class="input-field md:max-w-sm"
+            (input)="searchPoster($event)"
+          />
+          <div class="flex flex-wrap gap-2">
             <button
               *ngFor="let category of categories"
-              [class]="selectedCategory === category 
-                ? 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200'
-                : 'px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition duration-200'"
+              [class]="getCategoryButtonClass(category)"
               (click)="filterByCategory(category)"
             >
               {{ category }}
@@ -35,125 +31,103 @@
       </div>
     </section>
 
-    <!-- Posters Grid -->
     <section class="mb-12">
-      <!-- Empty State -->
-      <div *ngIf="displayedPosters.length === 0" class="text-center py-12">
-        <div class="text-5xl mb-4">🖼️</div>
-        <h3 class="text-xl font-bold text-gray-700 mb-2">Tidak ada poster ditemukan</h3>
-        <p class="text-gray-600">Coba kata kunci lain atau pilih kategori berbeda</p>
+      <div *ngIf="displayedPosters.length === 0" class="py-12 text-center">
+        <div class="soft-panel mx-auto max-w-md p-8">
+          <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada poster ditemukan</h3>
+          <p class="mt-2 text-[#5f6f6a]">Coba kata kunci lain atau pilih kategori berbeda.</p>
+        </div>
       </div>
-      
-      <!-- Posters Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Poster Card -->
-        <div
-          *ngFor="let poster of displayedPosters"
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group"
-        >
-          <!-- Image Section -->
-          <div class="aspect-[6/12] relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-300">
-            <!-- Gambar dari public/img -->
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <article *ngFor="let poster of displayedPosters" class="content-card group">
+          <div class="relative aspect-[3/4] overflow-hidden bg-[#eef2ef]">
             <img
               [src]="poster.imageUrl"
               [alt]="poster.title"
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              class="h-full w-full object-contain"
               (error)="handleImageError($event, poster)"
             />
-            
-            <!-- Category Badge -->
-            <div class="absolute top-4 left-4">
-              <span
-                class="px-3 py-1 rounded-full text-xs font-medium shadow-sm"
-                [ngClass]="getCategoryBadgeClass(poster.category)"
-              >
-                {{ poster.category }}
+
+            <div class="absolute left-3 top-3">
+              <span class="badge">{{ poster.category }}</span>
+            </div>
+            <div class="absolute right-3 top-3">
+              <span class="rounded-full bg-white/90 px-3 py-1 text-xs font-extrabold text-[#123d34]">
+                {{ poster.typeLabel }}
               </span>
             </div>
-            
-            <!-- Overlay untuk hover effect -->
-            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
-            
-            <!-- Favorite Button -->
-            <button
-              class="absolute top-4 right-4 bg-white/90 text-gray-700 p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-white hover:text-yellow-500"
-              (click)="toggleFavorite(poster); $event.stopPropagation()"
-            >
-              ⭐
-            </button>
-            
-            <!-- Download Button Overlay -->
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/40">
+
+            <div class="absolute inset-0 flex items-center justify-center bg-[#0f2722]/0 opacity-0 transition group-hover:bg-[#0f2722]/35 group-hover:opacity-100">
               <button
-                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition duration-200"
+                class="primary-button"
                 (click)="downloadPoster(poster); $event.stopPropagation()"
               >
-                <span class="text-lg">📥</span>
-                <span>Download</span>
+                Download
               </button>
             </div>
           </div>
-          
-          <!-- Info Section -->
-          <div class="p-4">
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2 text-lg">{{ poster.title }}</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ poster.description }}</p>
-            
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div class="flex items-center space-x-2">
-                <span class="bg-gray-100 px-2 py-1 rounded text-xs">A4</span>
-                <span class="bg-gray-100 px-2 py-1 rounded text-xs">300DPI</span>
-                <span class="bg-gray-100 px-2 py-1 rounded text-xs">PNG</span>
+
+          <div class="p-5">
+            <h3 class="line-clamp-2 text-lg font-extrabold leading-snug text-[#123d34]">
+              {{ poster.title }}
+            </h3>
+            <p class="mt-2 line-clamp-2 text-sm leading-6 text-[#5f6f6a]">
+              {{ poster.description }}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2 meta-text">
+                <span class="rounded border border-[#dfe8e3] px-2 py-1">{{ poster.format }}</span>
+                <span class="rounded border border-[#dfe8e3] px-2 py-1">{{ poster.typeLabel }}</span>
               </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-                (click)="downloadPoster(poster)"
-              >
-                <span>📥</span>
-                <span class="text-xs">Download</span>
+              <button class="text-sm font-extrabold text-[#1f6f5b]" (click)="downloadPoster(poster)">
+                Download
               </button>
             </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- Download Info Section -->
     <section class="mb-12">
-      <div class="bg-white rounded-2xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold text-green-800 mb-6 text-center">
-          💡 Tips Menggunakan Poster
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="text-center p-4">
-            <div class="text-3xl mb-3">📱</div>
-            <h3 class="font-bold text-green-800 mb-2">Konten Media Sosial</h3>
-            <p class="text-gray-600 text-sm">
-              Share poster di Instagram, Facebook, Twitter untuk dakwah digital
+      <div class="soft-panel p-6 md:p-8">
+        <div class="mb-6 text-center">
+          <p class="eyebrow">Panduan Ringkas</p>
+          <h2 class="section-title mt-2">Menggunakan Poster dengan Tepat</h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div class="border-t border-[#dfe8e3] pt-4">
+            <span class="text-sm font-extrabold text-[#b98b2f]">01</span>
+            <h3 class="mt-2 font-extrabold text-[#123d34]">Media Sosial</h3>
+            <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">
+              Gunakan caption yang jelas dan sertakan sumber materi saat membagikan poster.
             </p>
           </div>
-          <div class="text-center p-4">
-            <div class="text-3xl mb-3">🖨️</div>
-            <h3 class="font-bold text-green-800 mb-2">Print & Dekorasi</h3>
-            <p class="text-gray-600 text-sm">Cetak untuk dekorasi masjid, rumah, atau kantor</p>
+          <div class="border-t border-[#dfe8e3] pt-4">
+            <span class="text-sm font-extrabold text-[#b98b2f]">02</span>
+            <h3 class="mt-2 font-extrabold text-[#123d34]">Cetak</h3>
+            <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">
+              Cetak dalam ukuran yang nyaman dibaca untuk masjid, rumah, atau ruang belajar.
+            </p>
           </div>
-          <div class="text-center p-4">
-            <div class="text-3xl mb-3">📚</div>
-            <h3 class="font-bold text-green-800 mb-2">Materi Edukasi</h3>
-            <p class="text-gray-600 text-sm">
-              Gunakan sebagai bahan ajar di sekolah atau pengajian
+          <div class="border-t border-[#dfe8e3] pt-4">
+            <span class="text-sm font-extrabold text-[#b98b2f]">03</span>
+            <h3 class="mt-2 font-extrabold text-[#123d34]">Materi Kajian</h3>
+            <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">
+              Jadikan poster sebagai pengantar diskusi, bukan pengganti penjelasan yang utuh.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Load More Button -->
-    <section *ngIf="displayedPosters.length < allPosters.length && displayedPosters.length > 0" class="text-center">
-      <button
-        class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition duration-200 shadow-lg"
-        (click)="loadMore()"
-      >
+    <section
+      *ngIf="displayedPosters.length < allPosters.length && displayedPosters.length > 0"
+      class="text-center"
+    >
+      <button class="primary-button px-7 py-4" (click)="loadMore()">
         Muat Lebih Banyak Poster
       </button>
     </section>

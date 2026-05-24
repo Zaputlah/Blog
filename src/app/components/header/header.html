@@ -1,151 +1,108 @@
-<header class="bg-green-700 shadow-lg">
-  <nav class="container mx-auto px-4 py-4">
-    <div class="flex items-center justify-between">
-      <!-- Logo dengan tema Islami -->
-      <div class="flex items-center space-x-3">
-        <div
-          class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md overflow-hidden"
-        >
-          <img
-            src="zaputlah.png"
-            alt="Logo Zaputlah"
-            class="w-10 h-10 object-cover"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
-          />
-          <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hidden">
-            <span class="text-white font-bold text-sm">Z</span>
-          </div>
-        </div>
-        <div class="flex flex-col">
-          <span class="text-white text-xl font-bold">Zaputlah</span>
-          <span class="text-green-200 text-sm">Dakwah & Inspirasi Islami</span>
-        </div>
-      </div>
+<header class="sticky top-0 z-40 border-b border-[#dfe8e3] bg-white/95 backdrop-blur">
+  <nav class="page-container py-3">
+    <div class="flex items-center justify-between gap-4">
+      <a routerLink="/beranda" class="flex shrink-0 items-center" (click)="closeMobileMenu()">
+        <span class="flex h-16 w-36 shrink-0 items-center justify-start md:h-20 md:w-44">
+          <img src="zaputlah.png" alt="Zaputlah" class="h-full w-full object-contain" />
+        </span>
+      </a>
 
-      <!-- Navigation Links -->
-      <div class="hidden md:flex items-center space-x-2">
+      <div class="hidden items-center gap-1 md:flex">
         <a
           routerLink="/beranda"
-          routerLinkActive="bg-green-800 text-white border-b-2 border-yellow-400"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-2"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
         >
-          <span>🏠</span>
-          <span>Beranda</span>
+          Beranda
         </a>
         <a
           routerLink="/artikel"
-          routerLinkActive="bg-green-800 text-white border-b-2 border-yellow-400"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-2"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
         >
-          <span>📖</span>
-          <span>Artikel</span>
+          Artikel
         </a>
         <a
-          routerLink="/video"
-          routerLinkActive="bg-green-800 text-white border-b-2 border-yellow-400"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-2"
+          routerLink="/kajian"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
         >
-          <span>🎥</span>
-          <span>Kajian Video</span>
+          Kajian
         </a>
         <a
           routerLink="/poster"
-          routerLinkActive="bg-green-800 text-white border-b-2 border-yellow-400"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-2"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
         >
-          <span>🕌</span>
-          <span>Galeri</span>
+          Poster
         </a>
-        <!-- Tambahan Quran Link -->
         <a
           routerLink="/quran"
-          routerLinkActive="bg-green-800 text-white border-b-2 border-yellow-400"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-2"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
         >
-          <span>📜</span>
-          <span>Al-Quran</span>
+          Al-Quran
         </a>
       </div>
 
-      <!-- Mobile menu button -->
-      <div class="md:hidden">
-        <button
-          type="button"
-          (click)="toggleMobileMenu()"
-          class="text-white hover:bg-green-600 p-3 rounded-lg transition duration-200 bg-green-800"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              [attr.d]="isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"
-            ></path>
-          </svg>
-        </button>
-      </div>
+      <button
+        type="button"
+        (click)="toggleMobileMenu()"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:bg-[#f7faf8] md:hidden"
+        aria-label="Buka menu"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            [attr.d]="isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'"
+          ></path>
+        </svg>
+      </button>
     </div>
 
-    <!-- Mobile Menu -->
-    <div
-      *ngIf="isMobileMenuOpen"
-      class="md:hidden mt-4 pb-4 border-t border-green-500 pt-4 bg-green-800 rounded-lg"
-    >
-      <!-- Basmalah for mobile -->
-      <div
-        class="text-center text-yellow-300 text-lg mb-4 font-arabic pb-2 border-b border-green-600"
+    <div *ngIf="isMobileMenuOpen" class="mt-3 grid gap-1 border-t border-[#dfe8e3] pt-3 md:hidden">
+      <a
+        routerLink="/beranda"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
       >
-        بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
-      </div>
-
-      <div class="flex flex-col space-y-3">
-        <a
-          routerLink="/beranda"
-          routerLinkActive="bg-green-900 text-yellow-300"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-3 border-r-4 border-yellow-400"
-          (click)="closeMobileMenu()"
-        >
-          <span class="text-xl">🏠</span>
-          <span>Beranda</span>
-        </a>
-        <a
-          routerLink="/artikel"
-          routerLinkActive="bg-green-900 text-yellow-300"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-3 border-r-4 border-yellow-400"
-          (click)="closeMobileMenu()"
-        >
-          <span class="text-xl">📖</span>
-          <span>Artikel Islami</span>
-        </a>
-        <a
-          routerLink="/video"
-          routerLinkActive="bg-green-900 text-yellow-300"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-3 border-r-4 border-yellow-400"
-          (click)="closeMobileMenu()"
-        >
-          <span class="text-xl">🎥</span>
-          <span>Kajian Video</span>
-        </a>
-        <a
-          routerLink="/poster"
-          routerLinkActive="bg-green-900 text-yellow-300"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-3 border-r-4 border-yellow-400"
-          (click)="closeMobileMenu()"
-        >
-          <span class="text-xl">🕌</span>
-          <span>Galeri Islami</span>
-        </a>
-        <!-- Tambahan Quran di Mobile -->
-        <a
-          routerLink="/quran"
-          routerLinkActive="bg-green-900 text-yellow-300"
-          class="text-white hover:bg-green-600 px-4 py-3 rounded-lg transition duration-200 font-medium flex items-center space-x-3 border-r-4 border-yellow-400"
-          (click)="closeMobileMenu()"
-        >
-          <span class="text-xl">📜</span>
-          <span>Al-Quran Digital</span>
-        </a>
-      </div>
+        Beranda
+      </a>
+      <a
+        routerLink="/artikel"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Artikel
+      </a>
+      <a
+        routerLink="/kajian"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Kajian
+      </a>
+      <a
+        routerLink="/poster"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Poster
+      </a>
+      <a
+        routerLink="/quran"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Al-Quran
+      </a>
     </div>
   </nav>
 </header>

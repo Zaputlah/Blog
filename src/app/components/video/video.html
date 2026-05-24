@@ -1,281 +1,346 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8">
-  <div class="container mx-auto px-4">
-    <!-- Video Player Section -->
-    <section *ngIf="showVideoPlayer && currentVideo" id="video-player" class="mb-8">
-      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <!-- Video Player Header -->
-        <div class="flex justify-between items-center p-4 border-b border-green-100">
+<div class="page-shell">
+  <div class="page-container">
+    <section *ngIf="showVideoPlayer && currentVideo" id="video-player" class="mb-10">
+      <div class="content-card">
+        <div class="flex flex-col gap-3 border-b border-[#dfe8e3] p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 class="text-xl font-bold text-green-800">{{ currentVideo.title }}</h2>
-            <p class="text-gray-600 text-sm mt-1">{{ currentVideo.speaker }}</p>
+            <h2 class="text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ currentVideo.title }}
+            </h2>
+            <p class="mt-1 text-sm font-medium text-[#5f6f6a]">{{ currentVideo.speaker }}</p>
           </div>
           <button
             (click)="closeVideoPlayer()"
-            class="text-gray-500 hover:text-gray-700 text-2xl p-2 hover:bg-gray-100 rounded-full transition duration-200"
-            title="Tutup Video"
+            class="secondary-button h-10 w-10 p-0"
+            title="Tutup video"
+            aria-label="Tutup video"
           >
-            ✕
+            &times;
           </button>
         </div>
 
-        <!-- YouTube Embed -->
         <div class="aspect-video bg-black">
           <iframe
             [src]="getVideoUrl(currentVideo.id)"
-            class="w-full h-full"
+            [title]="currentVideo.title"
+            class="h-full w-full"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
-          >
-          </iframe>
+          ></iframe>
         </div>
 
-        <!-- Video Info -->
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-4 text-sm text-gray-500">
-              <span>👁️ {{ currentVideo.views }}</span>
-              <span>⏱️ {{ currentVideo.duration }}</span>
-              <span>📅 {{ currentVideo.date }}</span>
+        <div class="p-5">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-wrap gap-3 meta-text">
+              <span>{{ currentVideo.views }} views</span>
+              <span>{{ currentVideo.duration }}</span>
+              <span>{{ currentVideo.date }}</span>
             </div>
-            <button
-              (click)="playVideoInNewTab(currentVideo.id)"
-              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-2"
-            >
-              <span>🔗</span>
-              <span>Buka di YouTube</span>
+            <button class="primary-button self-start sm:self-auto" (click)="playVideoInNewTab(currentVideo.id)">
+              Buka di YouTube
             </button>
           </div>
-          <p class="text-green-700 text-sm bg-green-50 p-3 rounded-lg">
-            💡 <strong>Tips:</strong> Video siap diputar! Klik tombol play pada video di atas.
-          </p>
         </div>
       </div>
     </section>
 
-    <!-- Header Section -->
-    <section class="text-center mb-12" [class.mt-8]="showVideoPlayer">
-      <h1 class="text-4xl md:text-5xl font-bold text-green-800 mb-4">🎥 Kajian Video</h1>
-      <p class="text-lg text-green-700 max-w-2xl mx-auto">
-        Kumpulan video kajian lengkap dan konten singkat inspiratif untuk menambah ilmu dan semangat
-        beribadah
+    <section class="page-intro" [class.mt-8]="showVideoPlayer">
+      <p class="eyebrow">Kajian</p>
+      <h1>Kajian</h1>
+      <p>
+        Pusat informasi kajian: jadwal rutin ustadz, rekaman ceramah full, dan video singkat yang
+        disusun rapi agar pengunjung mudah memilih materi.
       </p>
     </section>
 
-    <!-- Content Type Tabs -->
-    <!-- Search and Filter Section -->
-    <section class="mb-8">
-      <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
-          <!-- Filter Buttons -->
-          <div class="flex gap-2 flex-wrap">
+    <section class="mb-10">
+      <div class="soft-panel p-5 md:p-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div class="flex flex-wrap gap-2">
             <button (click)="filterVideos('all')" [class]="getButtonClass('all')">
-              <span>🎬</span>
-              <span>Semua Konten</span>
+              Semua Materi
+            </button>
+            <button (click)="filterVideos('schedule')" [class]="getButtonClass('schedule')">
+              Jadwal Kajian
             </button>
             <button (click)="filterVideos('full')" [class]="getButtonClass('full')">
-              <span>📹</span>
-              <span>Ceramah Full</span>
+              Ceramah Full
             </button>
             <button (click)="filterVideos('short')" [class]="getButtonClass('short')">
-              <span>⚡</span>
-              <span>Ceramah Singkat</span>
+              Ceramah Singkat
             </button>
           </div>
 
-          <!-- Search Box -->
-          <div class="flex-1 max-w-md relative">
-            <div class="relative">
-              <input
-                type="text"
-                [(ngModel)]="searchQuery"
-                placeholder="Cari video, ustadz, atau topik..."
-                class="w-full px-4 py-3 pl-10 pr-10 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <!-- Search Icon -->
-              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-              </div>
-              <!-- Clear Button -->
-              <button
-                *ngIf="searchQuery"
-                (click)="clearSearch()"
-                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition duration-200"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Search Results Info -->
-        <div *ngIf="searchQuery" class="mt-4 p-3 bg-blue-50 rounded-lg">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-blue-700">
-              <span>🔍</span>
-              <span class="font-medium">Hasil pencarian untuk: "{{ searchQuery }}"</span>
-              <span class="text-blue-600 text-sm">({{ searchResultsCount }} video ditemukan)</span>
-            </div>
+          <div class="relative w-full lg:max-w-md">
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              placeholder="Cari jadwal, ustadz, topik, atau video..."
+              class="input-field pr-11"
+            />
             <button
+              *ngIf="searchQuery"
               (click)="clearSearch()"
-              class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
+              class="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded text-[#5f6f6a] hover:bg-[#f3f8f5]"
+              aria-label="Hapus pencarian"
             >
-              <span>✕</span>
-              <span>Hapus pencarian</span>
+              &times;
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="searchQuery" class="mt-4 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm font-semibold text-[#123d34]">
+              Hasil untuk "{{ searchQuery }}" ({{ searchResultsCount }} materi)
+            </p>
+            <button (click)="clearSearch()" class="text-sm font-extrabold text-[#1f6f5b]">
+              Hapus pencarian
             </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Full Ceramah Section -->
-    <section class="mb-12" *ngIf="filteredFullVideos.length > 0">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-green-800 flex items-center">
-          <span class="mr-2">📹</span> Ceramah Full Length
-        </h2>
-        <span class="text-green-600 font-medium"> {{ filteredFullVideos.length }} video </span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Full Video Items -->
-        <div
-          *ngFor="let video of filteredFullVideos"
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer group"
-          (click)="playVideoInPlace(video)"
-        >
-          <div class="aspect-video bg-gray-900 relative">
-            <img
-              [src]="video.thumbnail"
-              [alt]="video.title"
-              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            />
-            <div
-              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200"
-            >
-              <div
-                class="bg-red-600 hover:bg-red-700 w-12 h-12 rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-200"
-              >
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
-            <div
-              class="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm"
-            >
-              {{ video.duration }}
-            </div>
-            <div
-              class="absolute top-3 left-3 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium"
-            >
-              FULL
-            </div>
-          </div>
-          <div class="p-4">
-            <h3 class="font-bold text-green-800 mb-2 line-clamp-2">{{ video.title }}</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ video.speaker }}</p>
-            <div class="flex justify-between items-center text-sm text-gray-500">
-              <div class="flex items-center space-x-3">
-                <span>👁️ {{ video.views }}</span>
-                <span>📅 {{ video.date }}</span>
-              </div>
-              <button
-                class="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1"
-              >
-                <span>▶️</span>
-                <span class="text-xs">Tonton</span>
-              </button>
-            </div>
-          </div>
+    <section class="mb-12" *ngIf="filteredBlokMSchedules.length > 0">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Jadwal</p>
+          <h2 class="section-title mt-2">Kajian Rutin Blok M Square</h2>
         </div>
+        <span class="meta-text">{{ filteredBlokMSchedules.length }} jadwal</span>
+      </div>
+
+      <p class="mb-5 max-w-3xl text-sm leading-7 text-[#5f6f6a]">
+        Jadwal di bawah adalah jadwal rutin yang dikenal di Masjid Nurul Iman, Blok M Square lt. 7.
+        Karena kajian bisa berubah sewaktu-waktu, cek ulang pengumuman mingguan melalui Instagram
+        masjid atau kanal resmi ustadz terkait sebelum berangkat.
+      </p>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <article *ngFor="let schedule of filteredBlokMSchedules" class="content-card">
+          <div class="quiet-block p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span class="badge">{{ schedule.day }}</span>
+              <span class="text-sm font-extrabold text-[#b98b2f]">Rutin, cek update resmi</span>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <h3 class="text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ schedule.topic }}
+            </h3>
+            <p class="mt-2 text-sm font-semibold text-[#5f6f6a]">{{ schedule.ustadz }}</p>
+
+            <div class="mt-5 grid gap-3 text-sm text-[#5f6f6a]">
+              <div class="flex items-start justify-between gap-4 border-b border-[#edf2ef] pb-3">
+                <span class="font-bold text-[#123d34]">Waktu</span>
+                <span class="text-right">{{ schedule.time }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-4 border-b border-[#edf2ef] pb-3">
+                <span class="font-bold text-[#123d34]">Lokasi</span>
+                <span class="text-right">{{ schedule.location }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-4 border-b border-[#edf2ef] pb-3">
+                <span class="font-bold text-[#123d34]">Akses</span>
+                <span class="text-right">{{ schedule.platform }}</span>
+              </div>
+            </div>
+
+            <p class="mt-5 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3 text-sm leading-6 text-[#5f6f6a]">
+              {{ schedule.note }}
+            </p>
+
+            <div class="mt-5 flex flex-wrap gap-3">
+              <a
+                [href]="schedule.youtubeUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="primary-button px-4 py-2 text-sm"
+              >
+                YouTube
+              </a>
+              <a
+                [href]="schedule.sourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="secondary-button px-4 py-2 text-sm"
+              >
+                Sumber: {{ schedule.sourceLabel }}
+              </a>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- Short Ceramah Section -->
-    <section class="mb-12" *ngIf="filteredShortVideos.length > 0">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-green-800 flex items-center">
-          <span class="mr-2">⚡</span> Ceramah Singkat & Reels
-        </h2>
-        <span class="text-green-600 font-medium"> {{ filteredShortVideos.length }} video </span>
+    <section class="mb-12" *ngIf="filteredDynamicSchedules.length > 0">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Jadwal Dinamis</p>
+          <h2 class="section-title mt-2">Kajian dan Tabligh Akbar Lintas Lokasi</h2>
+        </div>
+        <span class="meta-text">{{ filteredDynamicSchedules.length }} jadwal</span>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <!-- Short Video Items -->
-        <div
-          *ngFor="let video of filteredShortVideos"
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 hover:scale-105 cursor-pointer group"
-          (click)="playVideoInPlace(video)"
-        >
-          <div class="aspect-[9/16] bg-gray-900 relative">
-            <img
-              [src]="video.thumbnail"
-              [alt]="video.title"
-              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            />
-            <div
-              class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200"
-            >
-              <div
-                class="bg-red-600 hover:bg-red-700 w-10 h-10 rounded-full flex items-center justify-center transform group-hover:scale-110 transition duration-200"
-              >
-                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
-            <div
-              class="absolute top-2 left-2 bg-white text-purple-600 px-1 py-0.5 rounded text-xs font-bold"
-            >
-              SHORT
-            </div>
-            <div
-              class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs"
-            >
-              {{ video.duration }}
+
+      <p class="mb-5 max-w-3xl text-sm leading-7 text-[#5f6f6a]">
+        Jadwal Ustadz Firanda dan Ustadz Syafiq sering mengikuti poster terbaru, berpindah lokasi,
+        dan disiarkan melalui kanal resmi masing-masing. Gunakan tombol sumber untuk memastikan
+        jadwal pekan berjalan.
+      </p>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <article *ngFor="let schedule of filteredDynamicSchedules" class="content-card">
+          <div class="quiet-block p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span class="badge">{{ schedule.day }}</span>
+              <span class="text-sm font-extrabold text-[#b98b2f]">Dinamis, cek poster resmi</span>
             </div>
           </div>
-          <div class="p-3">
-            <h3 class="font-semibold text-green-800 text-sm text-center line-clamp-2">
+
+          <div class="p-6">
+            <h3 class="text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ schedule.topic }}
+            </h3>
+            <p class="mt-2 text-sm font-semibold text-[#5f6f6a]">{{ schedule.ustadz }}</p>
+
+            <div class="mt-5 grid gap-3 text-sm text-[#5f6f6a]">
+              <div class="flex items-start justify-between gap-4 border-b border-[#edf2ef] pb-3">
+                <span class="font-bold text-[#123d34]">Waktu</span>
+                <span class="text-right">{{ schedule.time }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-4 border-b border-[#edf2ef] pb-3">
+                <span class="font-bold text-[#123d34]">Lokasi</span>
+                <span class="text-right">{{ schedule.location }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <span class="font-bold text-[#123d34]">Akses</span>
+                <span class="text-right">{{ schedule.platform }}</span>
+              </div>
+            </div>
+
+            <p class="mt-5 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3 text-sm leading-6 text-[#5f6f6a]">
+              {{ schedule.note }}
+            </p>
+
+            <div class="mt-5 flex flex-wrap gap-3">
+              <a
+                [href]="schedule.youtubeUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="primary-button px-4 py-2 text-sm"
+              >
+                YouTube
+              </a>
+              <a
+                [href]="schedule.sourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="secondary-button px-4 py-2 text-sm"
+              >
+                Sumber: {{ schedule.sourceLabel }}
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="mb-12" *ngIf="filteredFullVideos.length > 0">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Durasi Panjang</p>
+          <h2 class="section-title mt-2">Ceramah Full Length</h2>
+        </div>
+        <span class="meta-text">{{ filteredFullVideos.length }} video</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <article
+          *ngFor="let video of filteredFullVideos"
+          class="content-card cursor-pointer"
+          (click)="playVideoInPlace(video)"
+        >
+          <div class="relative aspect-video bg-[#17211f]">
+            <img [src]="video.thumbnail" [alt]="video.title" class="h-full w-full object-cover" />
+            <div class="absolute inset-0 bg-black/20"></div>
+            <span class="absolute left-3 top-3 rounded bg-white/90 px-2 py-1 text-xs font-extrabold text-[#123d34]">
+              FULL
+            </span>
+            <span class="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs font-semibold text-white">
+              {{ video.duration }}
+            </span>
+          </div>
+          <div class="p-5">
+            <h3 class="line-clamp-2 text-lg font-extrabold leading-snug text-[#123d34]">
               {{ video.title }}
             </h3>
-            <p class="text-gray-600 text-xs text-center mt-1 line-clamp-1">{{ video.speaker }}</p>
-            <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
-              <span>👁️ {{ video.views }}</span>
-              <span class="text-green-600">▶️</span>
+            <p class="mt-2 line-clamp-2 text-sm font-medium text-[#5f6f6a]">
+              {{ video.speaker }}
+            </p>
+            <div class="mt-4 flex items-center justify-between gap-3 meta-text">
+              <span>{{ video.views }} views</span>
+              <span>{{ video.date }}</span>
             </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- Empty State -->
-    <section
-      *ngIf="filteredFullVideos.length === 0 && filteredShortVideos.length === 0"
-      class="text-center py-12"
-    >
-      <div class="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
-        <div class="text-6xl mb-4">🎬</div>
-        <h3 class="text-xl font-bold text-green-800 mb-2">Tidak ada video</h3>
-        <p class="text-gray-600 mb-4">Tidak ada video yang sesuai dengan filter yang dipilih.</p>
-        <button
-          (click)="filterVideos('all')"
-          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
+    <section class="mb-12" *ngIf="filteredShortVideos.length > 0">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Durasi Singkat</p>
+          <h2 class="section-title mt-2">Ceramah Singkat</h2>
+        </div>
+        <span class="meta-text">{{ filteredShortVideos.length }} video</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <article
+          *ngFor="let video of filteredShortVideos"
+          class="content-card cursor-pointer"
+          (click)="playVideoInPlace(video)"
         >
-          Tampilkan Semua Video
+          <div class="relative aspect-[9/16] bg-[#17211f]">
+            <img [src]="video.thumbnail" [alt]="video.title" class="h-full w-full object-cover" />
+            <div class="absolute inset-0 bg-black/15"></div>
+            <span class="absolute left-2 top-2 rounded bg-white/90 px-2 py-1 text-[0.65rem] font-extrabold text-[#123d34]">
+              SHORT
+            </span>
+            <span class="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-xs font-semibold text-white">
+              {{ video.duration }}
+            </span>
+          </div>
+          <div class="p-4">
+            <h3 class="line-clamp-2 text-sm font-extrabold leading-snug text-[#123d34]">
+              {{ video.title }}
+            </h3>
+            <p class="mt-2 line-clamp-1 text-xs font-medium text-[#5f6f6a]">
+              {{ video.speaker || 'Kajian singkat' }}
+            </p>
+            <p class="mt-3 meta-text">{{ video.views }} views</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section
+      *ngIf="
+        filteredSchedules.length === 0 &&
+        filteredFullVideos.length === 0 &&
+        filteredShortVideos.length === 0
+      "
+      class="py-10 text-center"
+    >
+      <div class="soft-panel mx-auto max-w-md p-8">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada materi</h3>
+        <p class="mt-2 leading-7 text-[#5f6f6a]">
+          Tidak ada jadwal atau video yang sesuai dengan filter yang dipilih.
+        </p>
+        <button (click)="filterVideos('all')" class="primary-button mt-5">
+          Tampilkan Semua Materi
         </button>
       </div>
     </section>

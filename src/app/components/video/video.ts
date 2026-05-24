@@ -4,6 +4,20 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
+interface KajianSchedule {
+  ustadz: string;
+  topic: string;
+  day: string;
+  time: string;
+  location: string;
+  platform: string;
+  note: string;
+  youtubeUrl: string;
+  sourceUrl: string;
+  sourceLabel: string;
+  group: 'blokm' | 'dynamic';
+}
+
 @Component({
   selector: 'app-video',
   standalone: true,
@@ -19,6 +33,70 @@ export class Video {
   showVideoPlayer: boolean = false;
   activeFilter: string = 'all';
   searchQuery: string = '';
+
+  kajianSchedules: KajianSchedule[] = [
+    {
+      ustadz: 'Ustadz Muhammad Nuzul Dzikri',
+      topic: 'Kajian rutin Sabtu sore',
+      day: 'Setiap Sabtu',
+      time: '16.30/17.00 WIB sampai menjelang adzan Maghrib',
+      location: 'Masjid Nurul Iman Blok M Square lt. 7, Jakarta Selatan',
+      platform: 'Offline; biasanya juga dapat dipantau melalui kanal Masjid Nurul Iman',
+      note: 'Jadwal ini dikenal rutin di Blok M. Perubahan waktu, tema, atau libur kajian bisa dilihat di Instagram Masjid Nurul Iman dan media sosial Ustadz Muhammad Nuzul Dzikri.',
+      youtubeUrl: 'https://www.youtube.com/@MuhammadNuzulDzikri',
+      sourceUrl: 'https://www.instagram.com/masjidnuruliman/',
+      sourceLabel: 'Instagram Masjid Nurul Iman',
+      group: 'blokm',
+    },
+    {
+      ustadz: 'Ustadz Khalid Basalamah',
+      topic: 'Kajian rutin dan tabligh akbar',
+      day: 'Rabu malam',
+      time: '18.30-20.00 WIB',
+      location: 'Masjid Nurul Iman Blok M Square lt. 7, Jakarta Selatan',
+      platform: 'Offline; rekaman/live mengikuti pengumuman KHB Official',
+      note: 'Umumnya dijadwalkan Rabu malam, baik pekanan tertentu atau dua mingguan. Perubahan waktu, tema, atau tabligh akbar dapat dipantau melalui Info KHB Official dan kanal resmi Ustadz Khalid Basalamah.',
+      youtubeUrl: 'https://www.youtube.com/c/khalidbasalamah',
+      sourceUrl: 'https://www.instagram.com/infokhbofficial/',
+      sourceLabel: 'Instagram Info KHB Official',
+      group: 'blokm',
+    },
+    {
+      ustadz: 'Ustadz Firanda Andirja',
+      topic: 'Kajian rutin dan tabligh akbar lintas lokasi',
+      day: 'Selasa dan Ahad',
+      time: 'Selasa ba’da Maghrib; Ahad 09.30 WIB-selesai',
+      location:
+        'Selasa: Masjid Baiturrahman, Pondok Pinang, Jakarta Selatan; Ahad: Masjid Jami Al-Barkah, Cileungsi, Bogor',
+      platform: 'YouTube dan Facebook Ustadz Firanda Andirja Official',
+      note: 'Jadwal Ustadz Firanda bersifat dinamis dan dapat berpindah lokasi. Jadwal rinci, poster kajian, tabligh akbar, dan perubahan waktu dipantau melalui kanal resmi beliau.',
+      youtubeUrl: 'https://www.youtube.com/@FirandaAndirjaOfficial',
+      sourceUrl: 'https://firanda.com/',
+      sourceLabel: 'Website Firanda Official',
+      group: 'dynamic',
+    },
+    {
+      ustadz: 'Ustadz Syafiq Riza Basalamah',
+      topic: 'Kajian tematik, tabligh akbar, dan kajian keluarga',
+      day: 'Dinamis mengikuti poster resmi',
+      time: 'Pagi, sore, atau malam mengikuti jadwal terbaru',
+      location: 'Berpindah lokasi, antara lain Jakarta, Jember, dan kota lainnya',
+      platform: 'Website resmi, YouTube, Facebook, dan SRB Apps',
+      note: 'Jadwal Ustadz Syafiq bersifat dinamis dan sering berpindah tempat. Jadwal terbaru dan rekaman kajian dapat dipantau melalui website resmi serta channel YouTube Syafiq Riza Basalamah Official.',
+      youtubeUrl: 'https://www.youtube.com/@SyafiqRizaBasalamahOfficial',
+      sourceUrl: 'https://www.syafiqrizabasalamah.id/',
+      sourceLabel: 'Website SRB Official',
+      group: 'dynamic',
+    },
+  ];
+
+  get filteredBlokMSchedules() {
+    return this.filteredSchedules.filter((schedule) => schedule.group === 'blokm');
+  }
+
+  get filteredDynamicSchedules() {
+    return this.filteredSchedules.filter((schedule) => schedule.group === 'dynamic');
+  }
 
   // Data untuk featured videos
   featuredVideos = [
@@ -59,7 +137,7 @@ export class Video {
     },
     {
       id: '3-wVZm2yZy4',
-      title: 'Yang terbaik pilihan allah',
+      title: 'Yang Terbaik Pilihan Allah',
       speaker: 'Ustadz Firanda Andirja',
       duration: '08:18',
       views: '43',
@@ -70,7 +148,7 @@ export class Video {
     },
     {
       id: '2jkVGd7ldm0',
-      title: 'Memahami karakter wanita dalam islam',
+      title: 'Memahami Karakter Wanita dalam Islam',
       speaker: 'Ustadz Khalid Basalamah',
       duration: '18:20',
       views: '14',
@@ -86,7 +164,7 @@ export class Video {
     {
       id: '0VyFYtZE0Ac',
       title: 'Doa ketika bersin',
-      speaker: 'Ust. Khalid basalamah',
+      speaker: 'Ust. Khalid Basalamah',
       duration: '01:00',
       views: '140',
       date: '2 hari lalu',
@@ -96,7 +174,7 @@ export class Video {
     {
       id: 'MpUOH4jbS2o',
       title: 'Imsak',
-      speaker: 'Ust. Firanda andirja',
+      speaker: 'Ust. Firanda Andirja',
       duration: '01:00',
       views: '14',
       date: '1 hari lalu',
@@ -125,7 +203,7 @@ export class Video {
     },
     {
       id: '11YGA57kjgs',
-      title: 'hal yang di sangka membatalkan puasa',
+      title: 'Hal yang Disangka Membatalkan Puasa',
       speaker: 'Ust. Firanda Andirja',
       duration: '01:00',
       views: '22',
@@ -205,7 +283,7 @@ export class Video {
     },
     {
       id: 'izidXdpAy40',
-      title: '1 Menit untuk allah',
+      title: '1 Menit untuk Allah',
       speaker: '',
       duration: '01:00',
       views: '9',
@@ -220,12 +298,26 @@ export class Video {
     return [...this.featuredVideos, ...this.fullVideos, ...this.shortVideos];
   }
 
+  get filteredSchedules() {
+    if (this.activeFilter === 'full' || this.activeFilter === 'short') {
+      return [];
+    }
+
+    let schedules = this.kajianSchedules;
+
+    if (this.searchQuery.trim()) {
+      schedules = this.filterSchedulesBySearch(schedules);
+    }
+
+    return schedules;
+  }
+
   // Get filtered videos based on active filter and search
   get filteredFullVideos() {
     let videos = this.fullVideos;
 
     // Apply type filter
-    if (this.activeFilter === 'short') {
+    if (this.activeFilter === 'short' || this.activeFilter === 'schedule') {
       return [];
     }
 
@@ -241,7 +333,7 @@ export class Video {
     let videos = this.shortVideos;
 
     // Apply type filter
-    if (this.activeFilter === 'full') {
+    if (this.activeFilter === 'full' || this.activeFilter === 'schedule') {
       return [];
     }
 
@@ -280,12 +372,25 @@ export class Video {
     );
   }
 
+  filterSchedulesBySearch(schedules: KajianSchedule[]): KajianSchedule[] {
+    const query = this.searchQuery.toLowerCase().trim();
+    if (!query) return schedules;
+
+    return schedules.filter(
+      (schedule) =>
+        schedule.ustadz.toLowerCase().includes(query) ||
+        schedule.topic.toLowerCase().includes(query) ||
+        schedule.day.toLowerCase().includes(query) ||
+        schedule.location.toLowerCase().includes(query) ||
+        schedule.platform.toLowerCase().includes(query) ||
+        schedule.note.toLowerCase().includes(query)
+    );
+  }
+
   // Get search results count
   get searchResultsCount(): number {
     return (
-      this.filteredFullVideos.length +
-      this.filteredShortVideos.length +
-      this.filteredFeaturedVideos.length
+      this.filteredSchedules.length + this.filteredFullVideos.length + this.filteredShortVideos.length
     );
   }
 
@@ -332,12 +437,6 @@ export class Video {
 
   // Get button classes based on active filter
   getButtonClass(type: string): string {
-    const baseClass =
-      'px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition duration-200';
-    if (this.activeFilter === type) {
-      return `${baseClass} bg-green-600 text-white hover:bg-green-700`;
-    } else {
-      return `${baseClass} bg-green-100 text-green-800 hover:bg-green-200`;
-    }
+    return this.activeFilter === type ? 'filter-button-active' : 'filter-button';
   }
 }

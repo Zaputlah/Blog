@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, timeout } from 'rxjs';
 import surah from '../json/surah.json';
 
 interface Surah {
@@ -19,6 +19,7 @@ interface ApiAyat {
   teksArab: string;
   teksIndonesia: string;
   teksLatin: string;
+  audio?: Record<string, string>;
 }
 
 interface ApiData {
@@ -29,7 +30,7 @@ interface ApiData {
   jumlahAyat: number;
   tempatTurun: string;
   deskripsi: string;
-  audioFull: string;
+  audioFull: Record<string, string> | string;
   ayat: ApiAyat[];
 }
 
@@ -68,12 +69,22 @@ export class Quran implements OnInit, OnDestroy {
   loading: boolean = false;
   loadingDetail: boolean = false;
   error: string = '';
+  detailError: string = '';
+  loadingSurahId: number | null = null;
+  lastRequestedSurahId: number | null = null;
 
   currentView: 'list' | 'read' = 'list';
 
   private apiSubscription: Subscription | null = null;
+  private surahCache = new Map<number, ApiData>();
+  private readonly localSurahLoaders: Record<number, () => Promise<{ default: unknown }>> = {
+    1: () => import('../json/1.json'),
+    2: () => import('../json/2.json'),
+    3: () => import('../json/3.json'),
+    4: () => import('../json/4.json'),
+  };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadSurah();
@@ -109,7 +120,7 @@ export class Quran implements OnInit, OnDestroy {
   // ============================================
   // BACA SURAH (API) - IMPLEMENTED
   // ============================================
-  bacaSurah(id: number) {
+  async bacaSurah(id: number) {
     this.selectedSurah = this.surahList.find((s) => s.nomor === id) || null;
 
     if (!this.selectedSurah) {
@@ -117,34 +128,84 @@ export class Quran implements OnInit, OnDestroy {
       return;
     }
 
+    const cachedSurah = this.surahCache.get(id);
+    if (cachedSurah) {
+      this.openSurah(cachedSurah);
+      return;
+    }
+
     this.loadingDetail = true;
-    this.surahDetail = null;
+    this.loadingSurahId = id;
+    this.lastRequestedSurahId = id;
+    this.detailError = '';
     this.error = '';
-    this.currentView = 'read';
+    this.cdr.markForCheck();
+
+    const wasReading = this.currentView === 'read';
+    if (wasReading) {
+      this.surahDetail = null;
+      this.cdr.markForCheck();
+    }
 
     // Cancel previous API call if any
     if (this.apiSubscription) {
       this.apiSubscription.unsubscribe();
     }
 
+    const localSurah = await this.loadLocalSurahDetail(id);
+    if (this.loadingSurahId !== id) {
+      return;
+    }
+
+    if (localSurah) {
+      this.surahCache.set(id, localSurah);
+      this.openSurah(localSurah);
+      return;
+    }
+
     // Hit API endpoint untuk mendapatkan detail surah
     this.apiSubscription = this.http
       .get<ApiResponse>(`https://equran.id/api/v2/surat/${id}`)
+      .pipe(timeout(12000))
       .subscribe({
         next: (res) => {
-          this.loadingDetail = false;
-
           if (res.code === 200 && res.data) {
-            this.surahDetail = res.data;
+            this.surahCache.set(id, res.data);
+            this.openSurah(res.data);
           } else {
-            this.handleError({ message: 'Data surah tidak valid' });
+            this.handleDetailError({ message: 'Data surah tidak valid' });
           }
         },
         error: (err: HttpErrorResponse) => {
-          this.loadingDetail = false;
-          this.handleError(err);
+          this.handleDetailError(err);
         },
       });
+  }
+
+  private async loadLocalSurahDetail(id: number): Promise<ApiData | null> {
+    const loader = this.localSurahLoaders[id];
+    if (!loader) {
+      return null;
+    }
+
+    try {
+      const module = await loader();
+      const response = module.default as ApiResponse;
+      return response.code === 200 && response.data ? response.data : null;
+    } catch (err) {
+      console.error('Error loading local surah data:', err);
+      return null;
+    }
+  }
+
+  private openSurah(data: ApiData) {
+    this.loadingDetail = false;
+    this.loadingSurahId = null;
+    this.detailError = '';
+    this.surahDetail = data;
+    this.currentView = 'read';
+    this.scrollToTop();
+    this.cdr.markForCheck();
   }
 
   // ============================================
@@ -152,15 +213,13 @@ export class Quran implements OnInit, OnDestroy {
   // ============================================
   nextSurah() {
     if (this.selectedSurah && this.selectedSurah.nomor < this.surahList.length) {
-      this.bacaSurah(this.selectedSurah.nomor + 1);
-      this.scrollToTop();
+      void this.bacaSurah(this.selectedSurah.nomor + 1);
     }
   }
 
   previousSurah() {
     if (this.selectedSurah && this.selectedSurah.nomor > 1) {
-      this.bacaSurah(this.selectedSurah.nomor - 1);
-      this.scrollToTop();
+      void this.bacaSurah(this.selectedSurah.nomor - 1);
     }
   }
 
@@ -169,10 +228,18 @@ export class Quran implements OnInit, OnDestroy {
   }
 
   kembaliKeDaftar() {
+    if (this.apiSubscription) {
+      this.apiSubscription.unsubscribe();
+    }
+
+    this.loadingDetail = false;
+    this.loadingSurahId = null;
+    this.detailError = '';
     this.currentView = 'list';
     this.surahDetail = null;
     this.selectedSurah = null;
     this.currentPage = 1;
+    this.cdr.markForCheck();
   }
 
   // ============================================
@@ -257,20 +324,39 @@ export class Quran implements OnInit, OnDestroy {
   // ============================================
   // ERROR HANDLING
   // ============================================
-  private handleError(error: HttpErrorResponse | any) {
+  retryLastSurah() {
+    if (this.lastRequestedSurahId) {
+      void this.bacaSurah(this.lastRequestedSurahId);
+    }
+  }
+
+  private handleDetailError(error: HttpErrorResponse | any) {
     console.error('Error:', error);
 
-    if (error.status === 0) {
-      this.error = 'Tidak dapat terhubung ke internet. Periksa koneksi Anda.';
-    } else if (error.status === 404) {
-      this.error = 'Data surah tidak ditemukan.';
-    } else if (error.status >= 500) {
-      this.error = 'Server sedang mengalami gangguan. Silakan coba lagi nanti.';
-    } else if (error.message) {
-      this.error = error.message;
-    } else {
-      this.error = 'Terjadi kesalahan yang tidak diketahui.';
+    this.loadingDetail = false;
+    this.loadingSurahId = null;
+    this.detailError = this.getErrorMessage(error);
+    this.cdr.markForCheck();
+  }
+
+  private getErrorMessage(error: HttpErrorResponse | any): string {
+    if (error.name === 'TimeoutError') {
+      return 'Koneksi ke server Al-Quran terlalu lama. Silakan coba lagi.';
     }
+
+    if (error.status === 0) {
+      return 'Tidak dapat terhubung ke internet. Periksa koneksi Anda.';
+    }
+
+    if (error.status === 404) {
+      return 'Data surah tidak ditemukan.';
+    }
+
+    if (error.status >= 500) {
+      return 'Server sedang mengalami gangguan. Silakan coba lagi nanti.';
+    }
+
+    return error.message || 'Terjadi kesalahan yang tidak diketahui.';
   }
 
   // ============================================
@@ -285,15 +371,11 @@ export class Quran implements OnInit, OnDestroy {
   }
 
   getFilterButtonClass(active: boolean) {
-    return active
-      ? 'px-3 py-1 rounded bg-green-600 text-white text-sm transition duration-200'
-      : 'px-3 py-1 rounded bg-gray-100 hover:bg-green-200 text-sm transition duration-200';
+    return active ? 'filter-button-active' : 'filter-button';
   }
 
   getPaginationButtonClass(active: boolean) {
-    return active
-      ? 'px-3 py-1 rounded bg-green-600 text-white text-sm'
-      : 'px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm';
+    return active ? 'filter-button-active' : 'filter-button';
   }
 
   // Helper untuk menampilkan tempat turun dalam bahasa Indonesia
