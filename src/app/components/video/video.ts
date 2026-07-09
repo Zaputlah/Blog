@@ -22,6 +22,7 @@ interface KajianNote {
   title: string;
   speaker: string;
   date: string;
+  sortDate: string;
   location: string;
   topic: string;
   summary: string;
@@ -51,6 +52,7 @@ export class Video {
       title: 'Kesabaran Memiliki Nilai yang Lebih Tinggi daripada Nikmat yang Hilang',
       speaker: 'Ustadz Muhammad Nuzul Dzikri',
       date: 'Kajian Offline - Sabtu, 04 Juli 2026',
+      sortDate: '2026-07-04',
       location: 'Masjid Nurul Iman Blok M',
       topic: 'Kesabaran',
       summary:
@@ -71,6 +73,7 @@ export class Video {
       title: 'Bab Harap: Syahadat, Tauhid, dan Buah Amal Saleh',
       speaker: 'Ustadz Muhammad Nuzul Dzikri',
       date: 'Kajian Online - Rabu, 08 Juli 2026',
+      sortDate: '2026-07-08',
       location: 'Online',
       topic: 'Riyaadhush Shaalihiin',
       summary:
@@ -93,6 +96,7 @@ export class Video {
       title: 'Problematika Rumah Tangga: Hak, Kewajiban, dan Tabayyun',
       speaker: 'Ustadz Muhammad Nuzul Dzikri',
       date: 'Kajian Online - Ahad, 05 Juli 2026',
+      sortDate: '2026-07-05',
       location: 'Online',
       topic: 'Rumah Tangga',
       summary:
@@ -109,6 +113,27 @@ export class Video {
         'Parameter nafkah mengikuti kemampuan finansial suami, bukan tuntutan atau standar gaya hidup istri. Prinsip ini merujuk pada Surah At-Talaq ayat 7.',
         'Contoh nafkah: jika penghasilan suami pas-pasan, ia tidak dibebani memenuhi tuntutan rumah mewah atau gaya hidup tinggi. Ia wajib memberi nafkah sesuai kemampuannya, sementara tuntutan yang melampaui kemampuan perlu diluruskan.',
         'Sebelum memutuskan bercerai, suami disarankan mengevaluasi diri, mencari akar masalah dengan bijak, berkomunikasi dengan kepala dingin, dan menempuh jalan perbaikan semampunya.',
+      ],
+    },
+    {
+      title: 'Bab Harap: Rahmat Allah dalam QS. Al-Araf Ayat 156',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Online - Senin, 06 Juli 2026',
+      sortDate: '2026-07-06',
+      location: 'Online',
+      topic: 'Riyaadhush Shaalihiin',
+      summary:
+        'Kajian ini membahas konsep rahmat Allah berdasarkan QS. Al-Araf ayat 156 dalam Bab Raja atau Harapan dari kitab Riyaadhush Shaalihiin, terutama tentang rahmat umum, rahmat khusus, dan dorongan agar seorang hamba tidak berputus asa dari rahmat Allah.',
+      points: [
+        'Rahmat umum adalah kasih sayang Allah yang diberikan kepada seluruh makhluk tanpa terkecuali. Allah memberi fasilitas duniawi, rezeki, udara, sinar matahari, kesehatan, dan berbagai nikmat kepada orang beriman maupun orang kafir.',
+        'Rahmat khusus adalah rahmat spesial yang menjadi kunci kebahagiaan dunia dan akhirat. Rahmat ini Allah tetapkan bagi hamba yang bertakwa, menunaikan zakat, dan beriman kepada ayat-ayat Allah.',
+        'Contoh rahmat khusus adalah hidayah, taufik, dan keimanan. Seseorang yang dahulu jauh dari agama lalu tergerak belajar shalat, meninggalkan kebiasaan buruk, dan merasakan ketenangan batin sedang mendapatkan bentuk rahmat khusus dari Allah.',
+        'Seorang hamba tidak boleh berputus asa dari rahmat Allah. Hidayah, kesempatan bertaubat, dan perubahan hidup menuju ketaatan adalah bukti nyata bahwa pintu rahmat Allah selalu terbuka.',
+        'Walaupun seseorang merasa dosanya banyak, Allah tetap membuka pintu taubat dan memberi bimbingan kepada hamba yang ingin kembali kepada-Nya.',
+        'Sikap yang benar adalah menyadari bahwa kenikmatan, kemudahan hidup, dan kesabaran orang-orang di sekitar kita merupakan bentuk kasih sayang Allah yang seharusnya membuat kita semakin dekat kepada-Nya.',
+        'Contoh implementasi harapan: ketika seseorang sadar bahwa ia masih diberi rezeki padahal banyak dosa, kesadaran itu seharusnya tidak membuatnya putus asa, tetapi mendorongnya segera bertaubat.',
+        'Kesabaran pasangan, orang tua, atau orang-orang dekat dalam menghadapi kekurangan kita juga merupakan rahmat Allah yang dititipkan melalui mereka agar kita tidak semakin jauh dan tersesat.',
+        'Pesan penutup kajian mengingatkan tentang contoh Pak Ruslan, seorang warga terdampak banjir yang tetap berusaha mencari rezeki halal dan bersyukur atas ujian Allah sebagai bentuk keyakinan terhadap rahmat-Nya.',
       ],
     },
   ];
@@ -192,7 +217,9 @@ export class Video {
       notes = this.filterNotesBySearch(notes);
     }
 
-    return notes;
+    return [...notes].sort((firstNote, secondNote) =>
+      secondNote.sortDate.localeCompare(firstNote.sortDate)
+    );
   }
 
   // Data untuk featured videos

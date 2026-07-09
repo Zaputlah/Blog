@@ -1,4 +1,41 @@
-/* Jika perlu custom styles tambahan */
 :host {
   display: block;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--heading);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: color-mix(in srgb, var(--green) 42%, var(--line));
+  background: var(--hover);
+}
+
+.theme-toggle-mobile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  color: var(--heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 180ms ease;
+}
+
+.theme-toggle-mobile:hover {
+  background: var(--hover);
 }
