@@ -136,6 +136,27 @@ export class Video {
         'Pesan penutup kajian mengingatkan tentang contoh Pak Ruslan, seorang warga terdampak banjir yang tetap berusaha mencari rezeki halal dan bersyukur atas ujian Allah sebagai bentuk keyakinan terhadap rahmat-Nya.',
       ],
     },
+    {
+      title: 'Bab Harap: Rahmat Umum, Rahmat Khusus, dan Pintu Tobat',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Online - Selasa, 07 Juli 2026',
+      sortDate: '2026-07-07',
+      location: 'Online',
+      topic: 'Riyaadhush Shaalihiin',
+      summary:
+        'Kajian ini membahas konsep rahmat Allah dalam bab raja atau rasa harap berdasarkan tafsir Surah Al-Araf ayat 156, dengan penekanan pada perbedaan rahmat umum dan rahmat khusus, bahaya istidraj, serta luasnya pintu tobat.',
+      points: [
+        'Rahmat umum mencakup seluruh makhluk, baik yang beriman maupun kafir, yang taat maupun yang bermaksiat. Setiap makhluk merasakan kasih sayang Allah melalui napas, kesehatan, kesempatan hidup, dan nikmat duniawi lainnya.',
+        'Rahmat khusus hanya Allah tetapkan bagi orang-orang yang bertakwa, menunaikan zakat, dan beriman kepada ayat-ayat Allah. Rahmat ini membawa kebahagiaan dunia dan akhirat, perlindungan khusus, serta pertolongan Allah.',
+        'Iblis pernah mencoba mengklaim dirinya masuk dalam cakupan ayat bahwa rahmat Allah meliputi segala sesuatu. Namun, kelanjutan ayat membatasi rahmat khusus untuk orang-orang yang bertakwa dan beriman.',
+        'Iblis tidak termasuk dalam rahmat khusus karena kesombongan, kekafiran, dan ketidaktaatannya kepada Allah.',
+        'Keberhasilan duniawi, kekayaan, atau fasilitas hidup tidak boleh otomatis dianggap sebagai tanda seseorang mendapatkan rahmat khusus dari Allah.',
+        'Jika pencapaian duniawi diraih melalui cara haram atau maksiat, maka itu bukan rahmat khusus, melainkan bisa menjadi istidraj, yaitu penguluran waktu yang justru menjerumuskan menuju azab.',
+        'Walaupun seseorang belum mendapatkan rahmat khusus karena dosa-dosanya, ia tetap masih berada dalam rahmat umum selama Allah memberi akal, waktu, dan nyawa.',
+        'Pintu tobat selalu terbuka selama seorang hamba masih hidup dan mau kembali kepada Allah. Ini adalah bukti kasih sayang Allah yang sangat besar.',
+        'Rasa harap yang benar membuat seorang hamba tidak putus asa, tetapi juga tidak menjadikan rahmat Allah sebagai alasan untuk terus bermaksiat.',
+      ],
+    },
   ];
 
   kajianSchedules: KajianSchedule[] = [
