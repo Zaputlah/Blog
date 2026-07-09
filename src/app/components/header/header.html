@@ -11,35 +11,42 @@
         <a
           routerLink="/beranda"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Beranda
         </a>
         <a
           routerLink="/artikel"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Artikel
         </a>
         <a
           routerLink="/kajian"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Kajian
         </a>
         <a
           routerLink="/poster"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Poster
         </a>
         <a
+          routerLink="/doa"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
+        >
+          Doa
+        </a>
+        <a
           routerLink="/quran"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-4 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Al-Quran
         </a>
@@ -144,6 +151,14 @@
         (click)="closeMobileMenu()"
       >
         Al-Quran
+      </a>
+      <a
+        routerLink="/doa"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Doa
       </a>
       <button type="button" (click)="toggleTheme()" class="theme-toggle-mobile">
         {{ isDarkMode ? 'Mode Terang' : 'Mode Gelap' }}

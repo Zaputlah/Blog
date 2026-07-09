@@ -1,0 +1,164 @@
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Doa</p>
+      <h1>Doa dan Dzikir Harian</h1>
+      <p>
+        Kumpulan doa dan dzikir dari EQuran.id, dilengkapi teks Arab, latin, terjemahan, tag,
+        dan keterangan sumber.
+      </p>
+    </section>
+
+    <section class="mb-8">
+      <div class="soft-panel p-5 md:p-6">
+        <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <input
+            type="text"
+            class="input-field"
+            placeholder="Cari doa, arti, latin, grup, atau tag..."
+            [ngModel]="searchTerm"
+            (ngModelChange)="onSearchChange($event)"
+          />
+
+          <button class="secondary-button" type="button" (click)="resetFilters()">
+            Reset Filter
+          </button>
+        </div>
+
+        <div class="mt-5 grid gap-5 lg:grid-cols-2">
+          <div>
+            <p class="mb-2 text-sm font-extrabold text-[#123d34]">Grup Doa</p>
+            <div class="flex max-h-36 flex-wrap gap-2 overflow-auto pr-1">
+              <button
+                type="button"
+                [class]="getFilterButtonClass(selectedGroup === 'all')"
+                (click)="selectGroup('all')"
+              >
+                Semua
+              </button>
+              <button
+                *ngFor="let group of groups"
+                type="button"
+                [class]="getFilterButtonClass(selectedGroup === group)"
+                (click)="selectGroup(group)"
+              >
+                {{ group }}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p class="mb-2 text-sm font-extrabold text-[#123d34]">Tag</p>
+            <div class="flex max-h-36 flex-wrap gap-2 overflow-auto pr-1">
+              <button
+                type="button"
+                [class]="getFilterButtonClass(selectedTag === 'all')"
+                (click)="selectTag('all')"
+              >
+                Semua
+              </button>
+              <button
+                *ngFor="let tag of tags"
+                type="button"
+                [class]="getFilterButtonClass(selectedTag === tag)"
+                (click)="selectTag(tag)"
+              >
+                {{ tag }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-5 text-sm font-semibold text-[#5f6f6a]">
+          Menampilkan {{ filteredDoaList.length }} dari {{ doaList.length }} doa dan dzikir.
+        </p>
+      </div>
+    </section>
+
+    <section *ngIf="loading" class="py-12">
+      <div class="soft-panel mx-auto max-w-md p-8 text-center">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Memuat Doa</h3>
+        <p class="mt-2 text-[#5f6f6a]">Mengambil data dari EQuran.id...</p>
+      </div>
+    </section>
+
+    <section *ngIf="error" class="py-12">
+      <div class="soft-panel mx-auto max-w-md p-8 text-center">
+        <h3 class="text-xl font-extrabold text-red-700">Doa belum bisa dimuat</h3>
+        <p class="mt-2 leading-7 text-[#5f6f6a]">{{ error }}</p>
+        <button class="primary-button mt-5" type="button" (click)="loadDoa()">Coba Lagi</button>
+      </div>
+    </section>
+
+    <section *ngIf="!loading && !error" class="mb-12">
+      <div *ngIf="filteredDoaList.length === 0" class="soft-panel mx-auto max-w-md p-8 text-center">
+        <h3 class="text-xl font-extrabold text-[#123d34]">Doa tidak ditemukan</h3>
+        <p class="mt-2 text-[#5f6f6a]">Coba kata kunci, grup, atau tag lain.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <article *ngFor="let doa of paginatedDoaList; trackBy: trackDoa" class="content-card">
+          <div class="quiet-block p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span class="badge">{{ doa.grup }}</span>
+              <span class="meta-text">#{{ doa.id }}</span>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <h2 class="text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ doa.nama }}
+            </h2>
+
+            <div class="mt-5 text-right">
+              <p class="font-arabic text-3xl leading-loose text-[#17211f] md:text-4xl">
+                {{ doa.ar }}
+              </p>
+            </div>
+
+            <div class="mt-5 border-l-4 border-[#1f6f5b] pl-4">
+              <p class="italic leading-7 text-[#5f6f6a]">{{ doa.tr }}</p>
+            </div>
+
+            <div class="mt-5 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-4">
+              <p class="leading-8 text-[#17211f]">{{ doa.idn }}</p>
+            </div>
+
+            <div *ngIf="doa.tentang" class="mt-5">
+              <p class="text-sm font-extrabold text-[#123d34]">Keterangan</p>
+              <p class="mt-2 whitespace-pre-line text-sm leading-7 text-[#5f6f6a]">
+                {{ doa.tentang }}
+              </p>
+            </div>
+
+            <div *ngIf="doa.tag?.length" class="mt-5 flex flex-wrap gap-2">
+              <span *ngFor="let tag of doa.tag" class="badge">{{ tag }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div *ngIf="filteredDoaList.length > itemsPerPage" class="mt-8 flex items-center justify-between gap-4">
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="currentPage === 1"
+          (click)="goToPage(currentPage - 1)"
+        >
+          Sebelumnya
+        </button>
+
+        <span class="meta-text">Halaman {{ currentPage }} dari {{ totalPages }}</span>
+
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(currentPage + 1)"
+        >
+          Selanjutnya
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
