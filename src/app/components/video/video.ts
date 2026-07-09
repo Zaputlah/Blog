@@ -70,6 +70,27 @@ export class Video {
       ],
     },
     {
+      title: 'Ketika Hati Hambar dalam Beribadah kepada Allah',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Online - Sabtu, 04 Juli 2026',
+      sortDate: '2026-07-04',
+      location: 'Online',
+      topic: 'Tazkiyatun Nafs',
+      summary:
+        'Sesi tanya jawab ini membahas kondisi hati yang tidak lagi bergetar atau terasa hambar dalam beribadah, dengan penekanan pada mujahadatun nafs, menjaga batas syariat, menerima takdir Allah, dan memperbaiki ridha kepada Allah, Islam, dan Rasulullah.',
+      points: [
+        'Ketika hati terlalu bergantung kepada makhluk, seorang hamba perlu melakukan mujahadatun nafs, yaitu berjihad melawan diri sendiri agar hati kembali fokus kepada Allah.',
+        'Dalam masalah masa lalu, seperti terganggu karena mantan pasangan menikah kembali atau persoalan hak asuh anak, seseorang perlu bersikap bijak dan tetap menjaga batasan syariat.',
+        'Batasan syariat harus dijaga agar seseorang tidak mendzalimi diri sendiri maupun orang lain. Jika sudah bukan mahram, batasan fisik dan hati tetap harus diperhatikan.',
+        'Nasihat pentingnya adalah move on, fokus pada ketaatan, dan percaya bahwa ketetapan Allah, meskipun terasa pahit, adalah yang terbaik bagi hamba-Nya sebagaimana makna QS. Al-Baqarah ayat 216.',
+        'Iman bisa naik dan turun. Ketika ibadah terasa hambar, jalan keluarnya adalah memperbanyak ketaatan dan segera bertaubat dari maksiat.',
+        'Rasa manis iman dapat dirasakan ketika seseorang benar-benar ridha kepada Allah sebagai Rabb, Islam sebagai agama, dan Nabi Muhammad sebagai Rasul.',
+        'Masalah hambarnya ibadah seringkali bukan pada ibadahnya, seperti shalat, tetapi pada hati yang belum menerima takdir Allah atau belum sepenuhnya menerima ajaran agama dengan ikhlas.',
+        'Contoh praktis: ketika salat tetap dilakukan tetapi hati terasa kosong, seseorang perlu mengevaluasi penerimaan hatinya terhadap takdir Allah, bukan hanya menambah jumlah ibadah secara lahiriah.',
+        'Saat menghadapi musibah atau ketetapan yang tidak sesuai keinginan, latihan terpenting adalah menerima dengan ikhlas sebagai ketetapan Allah dan tetap menjaga ketaatan.',
+      ],
+    },
+    {
       title: 'Bab Harap: Syahadat, Tauhid, dan Buah Amal Saleh',
       speaker: 'Ustadz Muhammad Nuzul Dzikri',
       date: 'Kajian Online - Rabu, 08 Juli 2026',
