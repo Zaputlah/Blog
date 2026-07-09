@@ -18,6 +18,18 @@ interface KajianSchedule {
   group: 'blokm' | 'dynamic';
 }
 
+interface KajianNote {
+  title: string;
+  speaker: string;
+  date: string;
+  location: string;
+  topic: string;
+  summary: string;
+  points: string[];
+  sourceUrl?: string;
+  sourceLabel?: string;
+}
+
 @Component({
   selector: 'app-video',
   standalone: true,
@@ -33,6 +45,73 @@ export class Video {
   showVideoPlayer: boolean = false;
   activeFilter: string = 'all';
   searchQuery: string = '';
+
+  kajianNotes: KajianNote[] = [
+    {
+      title: 'Kesabaran Memiliki Nilai yang Lebih Tinggi daripada Nikmat yang Hilang',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Offline - Sabtu, 04 Juli 2026',
+      location: 'Masjid Nurul Iman Blok M',
+      topic: 'Kesabaran',
+      summary:
+        'Kaidah Umar bin Abdul Aziz: ketika Allah mencabut sebuah nikmat lalu menggantinya dengan kesabaran, maka kesabaran itu lebih baik daripada nikmat yang telah dicabut.',
+      points: [
+        'Contoh pertama: nikmat pekerjaan bisa dicabut oleh Allah dalam bentuk layoff atau PHK. Allah memberi kesabaran, dan menurut Umar bin Abdul Aziz, kesabaran karena layoff lebih baik daripada masih bekerja di perusahaan tersebut.',
+        'Contoh kedua: ketika seseorang pulang kerja dan sambutan di rumah tidak sesuai harapan, kesabaran menahan amarah dan emosi lebih tinggi nilainya daripada sambutan, pelukan, atau ciuman.',
+        'Inti pemahaman: nilai kesabaran yang Allah tawarkan lebih tinggi daripada nikmat yang hilang.',
+        'Ibn Qayyim menyebut orang yang bersabar mendapat tiga ganjaran: salawat Allah, rahmat Allah, dan hidayah Allah.',
+        'Salawat Allah adalah pujian dan kemuliaan dari Allah. Seseorang yang bersabar ketika tidak mendapat pujian manusia bisa mendapat pujian dari Allah.',
+        'Rahmat Allah mencakup kasih sayang, pertolongan, ketenangan hati, ampunan, serta berbagai kebaikan di dunia dan akhirat.',
+        'Hidayah Allah berarti Allah membimbing orang yang sabar agar tetap berada di jalan yang benar, kuat menghadapi ujian, dan selamat.',
+        'Skill menahan kesabaran, menahan emosi, dan menahan amarah adalah skill mewah yang underrated, tetapi sangat tinggi nilainya di sisi Allah.',
+        'Skill ini jarang dibahas dan kurang diminati, padahal levelnya tinggi karena nilai sabar lebih baik daripada nikmat-nikmat dunia.',
+      ],
+    },
+    {
+      title: 'Bab Harap: Syahadat, Tauhid, dan Buah Amal Saleh',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Online - Rabu, 08 Juli 2026',
+      location: 'Online',
+      topic: 'Riyaadhush Shaalihiin',
+      summary:
+        'Kajian ini membahas kitab Riyaadhush Shaalihiin pada Bab Harap, hadits ke-417 dari Ubadah bin ash-Shamit radhiallahu taala anhu, tentang agungnya syahadat, tauhid, dan buah amal saleh dalam kehidupan.',
+      points: [
+        'Inti hadits: hadits ini menekankan keutamaan persaksian Laa ilaha illallah dan Muhammad Rasulullah, pengakuan terhadap kedudukan Nabi Isa alaihissalam, serta keyakinan terhadap surga dan neraka. Barangsiapa bersaksi dengan ikhlas, Allah akan memasukkannya ke dalam surga.',
+        'Pentingnya syahadatain: kalimat syahadat adalah pintu masuk iman dan pondasi utama dalam Islam. Persaksian ini bukan sekadar ucapan, tetapi harus dibarengi dengan keikhlasan hati.',
+        'Hubungan tauhid dan amal: para ulama, seperti Ibn Qayyim, menjelaskan bahwa kalimat syahadat adalah al-kalimah thayyibah. Jika diucapkan dengan benar, ia akan melahirkan amal saleh lahir dan batin.',
+        'Amal saleh adalah buah dari pohon tauhid yang tertanam di dalam hati. Karena itu, iman yang benar seharusnya tampak pada amal dan akhlak sehari-hari.',
+        'Perumpamaan pohon dalam QS. Ibrahim ayat 24-25 menunjukkan iman seperti pohon yang akarnya kokoh, cabangnya menjulang ke langit, dan berbuah setiap waktu dengan izin Allah.',
+        'Iman yang benar akan membuahkan amal saleh yang konsisten, bukan hanya musiman ketika Ramadan, umrah, haji, atau saat berada di lingkungan kajian.',
+        'Evaluasi diri: apakah ibadah dan amal saleh kita sudah menjadi buah yang berkesinambungan dalam kehidupan sehari-hari, atau hanya muncul ketika berada di tempat dan suasana tertentu?',
+        'Contoh kondisi musiman: seseorang rajin shalat atau berbuat baik hanya saat berada di kajian, bulan Ramadan, umrah, atau haji, lalu amalnya hilang atau berkurang drastis ketika kembali ke rutinitas.',
+        'Contoh kondisi konsisten: di kantor tetap amanah dan jujur, di rumah tetap memuliakan istri, anak, dan orang tua, serta saat liburan tetap menjaga shalat dan batasan agama.',
+        'Intinya, jika pohon iman sudah kokoh, buah berupa akhlak dan ibadah akan muncul kapan pun dan di mana pun, tanpa menunggu waktu tertentu saja.',
+        'Kajian ditutup dengan ajakan untuk saling menolong saudara yang sedang diuji dengan penyakit melalui program sedekah rutin.',
+      ],
+    },
+    {
+      title: 'Problematika Rumah Tangga: Hak, Kewajiban, dan Tabayyun',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Online - Ahad, 05 Juli 2026',
+      location: 'Online',
+      topic: 'Rumah Tangga',
+      summary:
+        'Sesi tanya jawab ini membahas problematika rumah tangga yang kompleks, khususnya ketika istri tidak lagi menghormati suami, dengan penekanan pada hak dan kewajiban, nafkah, adab mengambil keputusan, serta pentingnya tabayyun.',
+      points: [
+        'Kewajiban nafkah berkaitan dengan tamkin, yaitu akses atau pelayanan istri kepada suami. Dalam pembahasan fikih, jika istri menolak melayani suami tanpa uzur syari, maka hak nafkahnya dapat gugur.',
+        'Menolak ajakan suami ke tempat tidur tanpa alasan syari yang sah termasuk dosa besar. Namun, ada uzur yang dibenarkan, seperti sakit berat, kondisi fisik yang membahayakan, sedang haid, atau permintaan yang menyimpang dari syariat.',
+        'Contoh tamkin: jika seorang istri sengaja dan terus-menerus menolak hubungan suami istri tanpa uzur syari, maka dalam fikih suami tidak lagi memikul kewajiban nafkah yang sama. Hal ini bukan izin untuk berlaku semena-mena, tetapi penegasan hak dan kewajiban dalam pernikahan.',
+        'Kesibukan duniawi, seperti bisnis atau jualan online, tidak otomatis menjadi uzur syari untuk mengabaikan kewajiban kepada suami jika tidak ada kondisi medis atau alasan syari yang nyata.',
+        'Istri dibenarkan, bahkan wajib, menolak jika suami meminta hubungan dengan cara yang diharamkan, meminta ketika istri sedang haid, atau ketika kondisi istri sakit dan hubungan tersebut membahayakan atau menimbulkan rasa sakit yang tidak wajar.',
+        'Keputusan talak tidak boleh diambil tergesa-gesa hanya dari satu sisi cerita. Masalah rumah tangga perlu didudukkan dengan objektif dan sebaiknya mendengar penjelasan dari kedua belah pihak.',
+        'Tabayyun penting sebelum mengambil keputusan besar seperti perceraian. Cerita satu pihak bisa memiliki framing tertentu, sehingga pendengar atau penengah tidak seharusnya langsung menjatuhkan vonis.',
+        'Seorang suami perlu mandiri dalam kebenaran. Walaupun keluarga atau lingkungan mendukung perilaku yang salah, ia tetap harus berpegang pada al-haq dan tidak larut dalam opini orang lain.',
+        'Parameter nafkah mengikuti kemampuan finansial suami, bukan tuntutan atau standar gaya hidup istri. Prinsip ini merujuk pada Surah At-Talaq ayat 7.',
+        'Contoh nafkah: jika penghasilan suami pas-pasan, ia tidak dibebani memenuhi tuntutan rumah mewah atau gaya hidup tinggi. Ia wajib memberi nafkah sesuai kemampuannya, sementara tuntutan yang melampaui kemampuan perlu diluruskan.',
+        'Sebelum memutuskan bercerai, suami disarankan mengevaluasi diri, mencari akar masalah dengan bijak, berkomunikasi dengan kepala dingin, dan menempuh jalan perbaikan semampunya.',
+      ],
+    },
+  ];
 
   kajianSchedules: KajianSchedule[] = [
     {
@@ -96,6 +175,24 @@ export class Video {
 
   get filteredDynamicSchedules() {
     return this.filteredSchedules.filter((schedule) => schedule.group === 'dynamic');
+  }
+
+  get filteredKajianNotes() {
+    if (
+      this.activeFilter === 'schedule' ||
+      this.activeFilter === 'full' ||
+      this.activeFilter === 'short'
+    ) {
+      return [];
+    }
+
+    let notes = this.kajianNotes;
+
+    if (this.searchQuery.trim()) {
+      notes = this.filterNotesBySearch(notes);
+    }
+
+    return notes;
   }
 
   // Data untuk featured videos
@@ -299,7 +396,11 @@ export class Video {
   }
 
   get filteredSchedules() {
-    if (this.activeFilter === 'full' || this.activeFilter === 'short') {
+    if (
+      this.activeFilter === 'notes' ||
+      this.activeFilter === 'full' ||
+      this.activeFilter === 'short'
+    ) {
       return [];
     }
 
@@ -317,7 +418,11 @@ export class Video {
     let videos = this.fullVideos;
 
     // Apply type filter
-    if (this.activeFilter === 'short' || this.activeFilter === 'schedule') {
+    if (
+      this.activeFilter === 'notes' ||
+      this.activeFilter === 'short' ||
+      this.activeFilter === 'schedule'
+    ) {
       return [];
     }
 
@@ -333,7 +438,11 @@ export class Video {
     let videos = this.shortVideos;
 
     // Apply type filter
-    if (this.activeFilter === 'full' || this.activeFilter === 'schedule') {
+    if (
+      this.activeFilter === 'notes' ||
+      this.activeFilter === 'full' ||
+      this.activeFilter === 'schedule'
+    ) {
       return [];
     }
 
@@ -387,10 +496,29 @@ export class Video {
     );
   }
 
+  filterNotesBySearch(notes: KajianNote[]): KajianNote[] {
+    const query = this.searchQuery.toLowerCase().trim();
+    if (!query) return notes;
+
+    return notes.filter(
+      (note) =>
+        note.title.toLowerCase().includes(query) ||
+        note.speaker.toLowerCase().includes(query) ||
+        note.date.toLowerCase().includes(query) ||
+        note.location.toLowerCase().includes(query) ||
+        note.topic.toLowerCase().includes(query) ||
+        note.summary.toLowerCase().includes(query) ||
+        note.points.some((point) => point.toLowerCase().includes(query))
+    );
+  }
+
   // Get search results count
   get searchResultsCount(): number {
     return (
-      this.filteredSchedules.length + this.filteredFullVideos.length + this.filteredShortVideos.length
+      this.filteredSchedules.length +
+      this.filteredKajianNotes.length +
+      this.filteredFullVideos.length +
+      this.filteredShortVideos.length
     );
   }
 

@@ -49,8 +49,8 @@
       <p class="eyebrow">Kajian</p>
       <h1>Kajian</h1>
       <p>
-        Pusat informasi kajian: jadwal rutin ustadz, rekaman ceramah full, dan video singkat yang
-        disusun rapi agar pengunjung mudah memilih materi.
+        Pusat informasi kajian: jadwal rutin ustadz, rangkuman kajian, rekaman ceramah full, dan
+        video singkat yang disusun rapi agar pengunjung mudah memilih materi.
       </p>
     </section>
 
@@ -64,6 +64,9 @@
             <button (click)="filterVideos('schedule')" [class]="getButtonClass('schedule')">
               Jadwal Kajian
             </button>
+            <button (click)="filterVideos('notes')" [class]="getButtonClass('notes')">
+              Rangkuman Kajian
+            </button>
             <button (click)="filterVideos('full')" [class]="getButtonClass('full')">
               Ceramah Full
             </button>
@@ -76,7 +79,7 @@
             <input
               type="text"
               [(ngModel)]="searchQuery"
-              placeholder="Cari jadwal, ustadz, topik, atau video..."
+              placeholder="Cari jadwal, rangkuman, ustadz, topik, atau video..."
               class="input-field pr-11"
             />
             <button
@@ -100,6 +103,61 @@
             </button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="mb-12" *ngIf="filteredKajianNotes.length > 0">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Catatan</p>
+          <h2 class="section-title mt-2">Rangkuman Kajian</h2>
+        </div>
+        <span class="meta-text">{{ filteredKajianNotes.length }} rangkuman</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <article *ngFor="let note of filteredKajianNotes" class="content-card">
+          <div class="quiet-block p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span class="badge">{{ note.topic }}</span>
+              <span class="meta-text">{{ note.date }}</span>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <p class="font-arabic text-right text-2xl leading-loose text-[#123d34]">
+              بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ
+            </p>
+            <h3 class="text-xl font-extrabold leading-snug text-[#123d34]">
+              {{ note.title }}
+            </h3>
+            <p class="mt-2 text-sm font-semibold text-[#5f6f6a]">{{ note.speaker }}</p>
+            <p class="mt-1 text-sm leading-6 text-[#5f6f6a]">{{ note.location }}</p>
+
+            <p class="mt-5 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3 text-sm leading-6 text-[#5f6f6a]">
+              {{ note.summary }}
+            </p>
+
+            <ul class="mt-5 grid gap-3 text-sm leading-6 text-[#34433f]">
+              <li
+                *ngFor="let point of note.points"
+                class="border-b border-[#edf2ef] pb-3 last:border-b-0 last:pb-0"
+              >
+                {{ point }}
+              </li>
+            </ul>
+
+            <a
+              *ngIf="note.sourceUrl"
+              [href]="note.sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="secondary-button mt-5 inline-flex px-4 py-2 text-sm"
+            >
+              {{ note.sourceLabel || 'Sumber Kajian' }}
+            </a>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -329,6 +387,7 @@
     <section
       *ngIf="
         filteredSchedules.length === 0 &&
+        filteredKajianNotes.length === 0 &&
         filteredFullVideos.length === 0 &&
         filteredShortVideos.length === 0
       "
@@ -337,7 +396,7 @@
       <div class="soft-panel mx-auto max-w-md p-8">
         <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada materi</h3>
         <p class="mt-2 leading-7 text-[#5f6f6a]">
-          Tidak ada jadwal atau video yang sesuai dengan filter yang dipilih.
+          Tidak ada jadwal, rangkuman, atau video yang sesuai dengan filter yang dipilih.
         </p>
         <button (click)="filterVideos('all')" class="primary-button mt-5">
           Tampilkan Semua Materi
