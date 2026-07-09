@@ -111,6 +111,10 @@
         <div>
           <p class="eyebrow">Catatan</p>
           <h2 class="section-title mt-2">Rangkuman Kajian</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-7 text-[#5f6f6a]">
+            Berisi inti kajian yang diikuti atau ditonton, diringkas menjadi faedah utama, contoh
+            penerapan, dan bahan evaluasi diri.
+          </p>
         </div>
         <span class="meta-text">{{ filteredKajianNotes.length }} rangkuman</span>
       </div>
@@ -134,11 +138,13 @@
             <p class="mt-2 text-sm font-semibold text-[#5f6f6a]">{{ note.speaker }}</p>
             <p class="mt-1 text-sm leading-6 text-[#5f6f6a]">{{ note.location }}</p>
 
-            <p class="mt-5 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3 text-sm leading-6 text-[#5f6f6a]">
+            <p class="mt-5 text-sm font-extrabold text-[#123d34]">Inti Kajian</p>
+            <p class="mt-2 rounded-lg border border-[#dfe8e3] bg-[#fbfcfb] p-3 text-sm leading-6 text-[#5f6f6a]">
               {{ note.summary }}
             </p>
 
-            <ul class="mt-5 grid gap-3 text-sm leading-6 text-[#34433f]">
+            <p class="mt-5 text-sm font-extrabold text-[#123d34]">Poin Penting</p>
+            <ul class="mt-3 grid gap-3 text-sm leading-6 text-[#34433f]">
               <li
                 *ngFor="let point of note.points"
                 class="border-b border-[#edf2ef] pb-3 last:border-b-0 last:pb-0"
