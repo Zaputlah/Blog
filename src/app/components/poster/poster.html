@@ -34,12 +34,175 @@
     <section class="mb-12">
       <div *ngIf="displayedPosters.length === 0" class="py-12 text-center">
         <div class="soft-panel mx-auto max-w-md p-8">
-          <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada poster ditemukan</h3>
-          <p class="mt-2 text-[#5f6f6a]">Coba kata kunci lain atau pilih kategori berbeda.</p>
+          <ng-container *ngIf="isKajianPosterEmpty; else noPosterFound">
+            <span class="badge">Poster Kajian</span>
+            <h3 class="mt-4 text-xl font-extrabold text-[#123d34]">Poster kajian segera hadir</h3>
+            <p class="mt-2 leading-7 text-[#5f6f6a]">
+              Bagian ini sudah disiapkan untuk informasi jadwal dan publikasi kajian yang akan
+              diunggah.
+            </p>
+          </ng-container>
+          <ng-template #noPosterFound>
+            <h3 class="text-xl font-extrabold text-[#123d34]">Tidak ada poster ditemukan</h3>
+            <p class="mt-2 text-[#5f6f6a]">Coba kata kunci lain atau pilih kategori berbeda.</p>
+          </ng-template>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div
+        *ngIf="selectedCategory === 'Poster Kajian' && displayedPosters.length > 0"
+        id="poster-kajian-series"
+        class="scroll-mt-6"
+      >
+        <div class="mb-6 flex flex-col gap-4 rounded-xl border border-[#dfe8e3] bg-[#fbfcfb] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm font-extrabold text-[#123d34]">Jenis Pelaksanaan Kajian</p>
+            <p class="mt-1 text-sm text-[#5f6f6a]">Pisahkan poster berdasarkan kajian offline atau online.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              *ngFor="let mode of ['Semua', 'Offline', 'Online']"
+              type="button"
+              [class]="selectedKajianMode === mode ? 'filter-button-active' : 'filter-button'"
+              (click)="filterKajianMode($any(mode))"
+            >
+              {{ mode }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="kajianPosterSeries.length === 0" class="soft-panel p-8 text-center">
+          <h3 class="text-xl font-extrabold text-[#123d34]">Belum ada poster kajian {{ selectedKajianMode | lowercase }}</h3>
+          <p class="mt-2 text-[#5f6f6a]">Poster akan ditampilkan di sini setelah materinya ditambahkan.</p>
+        </div>
+
+        <div class="grid gap-8">
+        <article
+          *ngFor="let series of paginatedKajianPosterSeries"
+          class="overflow-hidden rounded-2xl border border-[#dfe8e3] bg-white"
+        >
+          <div class="border-b border-[#dfe8e3] bg-[#fbfcfb] p-5 md:flex md:items-end md:justify-between md:p-6">
+            <div>
+              <div class="flex flex-wrap gap-2">
+                <span class="badge">Seri 5 Bagian</span>
+                <span class="rounded-full border border-[#b98b2f]/40 bg-[#fffaf0] px-3 py-1 text-xs font-extrabold text-[#8a651d]">
+                  Kajian {{ series.attendanceMode }}
+                </span>
+              </div>
+              <h2 class="mt-3 text-2xl font-extrabold text-[#123d34]">{{ series.title }}</h2>
+              <p class="mt-2 text-sm font-semibold text-[#5f6f6a]">{{ series.speaker }}</p>
+            </div>
+            <p class="mt-3 text-sm leading-6 text-[#5f6f6a] md:mt-0">
+              Baca berurutan dari bagian 1 hingga 5.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 p-5 sm:grid-cols-2 lg:grid-cols-5 md:p-6">
+            <article
+              *ngFor="let poster of series.posters; let posterIndex = index"
+              class="group overflow-hidden rounded-xl border border-[#dfe8e3] bg-white text-left transition hover:-translate-y-1 hover:border-[#1f6f5b] hover:shadow-lg"
+            >
+              <button
+                type="button"
+                class="relative block aspect-[3/4] w-full overflow-hidden bg-[#eef2ef] text-left"
+                (click)="openPosterViewer(series.posters, posterIndex)"
+                [attr.aria-label]="'Baca ' + poster.title"
+              >
+                <img
+                  [src]="poster.imageUrl"
+                  [alt]="poster.title"
+                  class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                  (error)="handleImageError($event, poster)"
+                />
+                <span class="absolute left-3 top-3 rounded-full bg-[#123d34] px-3 py-1 text-xs font-extrabold text-white shadow">
+                  {{ poster.sequence }}/{{ poster.seriesTotal }}
+                </span>
+              </button>
+              <div class="p-4">
+                <p class="text-xs font-extrabold uppercase tracking-wide text-[#b98b2f]">
+                  Bagian {{ poster.sequence }}
+                </p>
+                <h3 class="mt-2 line-clamp-2 font-extrabold leading-snug text-[#123d34]">
+                  {{ poster.title }}
+                </h3>
+                <div class="mt-4 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    class="text-sm font-extrabold text-[#1f6f5b]"
+                    (click)="openPosterViewer(series.posters, posterIndex)"
+                  >
+                    Baca poster
+                  </button>
+                  <button
+                    type="button"
+                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:border-[#1f6f5b] hover:bg-[#f3f8f5]"
+                    (click)="downloadPoster(poster)"
+                    title="Download poster"
+                    [attr.aria-label]="'Download ' + poster.title"
+                  >
+                    <svg
+                      class="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 3v12"></path>
+                      <path d="m7 10 5 5 5-5"></path>
+                      <path d="M5 21h14"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </article>
+        </div>
+
+        <nav
+          *ngIf="kajianSeriesTotalPages > 1"
+          class="mt-7 flex flex-col gap-4 rounded-xl border border-[#dfe8e3] bg-[#fbfcfb] p-4 sm:flex-row sm:items-center sm:justify-between"
+          aria-label="Navigasi seri poster kajian"
+        >
+          <p class="text-center text-sm font-semibold text-[#5f6f6a] sm:text-left">
+            Seri {{ kajianSeriesPage }} dari {{ kajianSeriesTotalPages }}
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              class="secondary-button px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              [disabled]="kajianSeriesPage === 1"
+              (click)="goToKajianSeriesPage(kajianSeriesPage - 1)"
+            >
+              Sebelumnya
+            </button>
+            <button
+              *ngFor="let page of kajianSeriesPageNumbers"
+              type="button"
+              [class]="page === kajianSeriesPage ? 'filter-button-active' : 'filter-button'"
+              (click)="goToKajianSeriesPage(page)"
+            >
+              {{ page }}
+            </button>
+            <button
+              type="button"
+              class="secondary-button px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              [disabled]="kajianSeriesPage === kajianSeriesTotalPages"
+              (click)="goToKajianSeriesPage(kajianSeriesPage + 1)"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      <div
+        *ngIf="selectedCategory !== 'Poster Kajian'"
+        class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      >
         <article *ngFor="let poster of displayedPosters" class="content-card group">
           <div class="relative aspect-[3/4] overflow-hidden bg-[#eef2ef]">
             <img
@@ -60,10 +223,25 @@
 
             <div class="absolute inset-0 flex items-center justify-center bg-[#0f2722]/0 opacity-0 transition group-hover:bg-[#0f2722]/35 group-hover:opacity-100">
               <button
-                class="primary-button"
+                class="primary-button flex h-11 w-11 items-center justify-center p-0"
                 (click)="downloadPoster(poster); $event.stopPropagation()"
+                title="Download poster"
+                [attr.aria-label]="'Download ' + poster.title"
               >
-                Download
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3v12"></path>
+                  <path d="m7 10 5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
               </button>
             </div>
           </div>
@@ -81,14 +259,120 @@
                 <span class="rounded border border-[#dfe8e3] px-2 py-1">{{ poster.format }}</span>
                 <span class="rounded border border-[#dfe8e3] px-2 py-1">{{ poster.typeLabel }}</span>
               </div>
-              <button class="text-sm font-extrabold text-[#1f6f5b]" (click)="downloadPoster(poster)">
-                Download
+              <button
+                type="button"
+                class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#1f6f5b] transition hover:border-[#1f6f5b] hover:bg-[#f3f8f5]"
+                (click)="downloadPoster(poster)"
+                title="Download poster"
+                [attr.aria-label]="'Download ' + poster.title"
+              >
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3v12"></path>
+                  <path d="m7 10 5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
               </button>
             </div>
           </div>
         </article>
       </div>
+
+      <div *ngIf="hasMorePosters" class="mt-8 text-center">
+        <button class="primary-button px-7 py-4" (click)="loadMore()">
+          Muat Lebih Banyak Poster
+        </button>
+      </div>
     </section>
+
+    <div
+      *ngIf="currentViewerPoster as poster"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-[#071a16]/90 p-3 md:p-6"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="poster.title"
+      (click)="closePosterViewer()"
+    >
+      <div
+        class="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between gap-4 border-b border-[#dfe8e3] p-4">
+          <div>
+            <p class="text-xs font-extrabold uppercase tracking-wide text-[#b98b2f]">
+              Bagian {{ viewerIndex + 1 }} dari {{ viewerPosters.length }}
+            </p>
+            <h2 class="mt-1 font-extrabold text-[#123d34]">{{ poster.title }}</h2>
+          </div>
+          <div class="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              class="primary-button flex h-10 w-10 items-center justify-center p-0"
+              (click)="downloadPoster(poster)"
+              title="Download poster"
+              [attr.aria-label]="'Download ' + poster.title"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="secondary-button h-10 w-10 p-0 text-xl"
+              aria-label="Tutup poster"
+              (click)="closePosterViewer()"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+
+        <div class="min-h-0 flex-1 overflow-auto bg-[#eef2ef] p-2 text-center md:p-4">
+          <img [src]="poster.imageUrl" [alt]="poster.title" class="mx-auto max-h-[72vh] max-w-full object-contain" />
+        </div>
+
+        <div class="flex items-center justify-between gap-3 border-t border-[#dfe8e3] p-4">
+          <button
+            type="button"
+            class="secondary-button px-4 py-2 disabled:cursor-not-allowed disabled:opacity-40"
+            [disabled]="viewerIndex === 0"
+            (click)="showPreviousPoster()"
+          >
+            ← Sebelumnya
+          </button>
+          <span class="hidden text-sm font-semibold text-[#5f6f6a] sm:block">
+            {{ viewerIndex + 1 }}/{{ viewerPosters.length }}
+          </span>
+          <button
+            type="button"
+            class="primary-button px-4 py-2 disabled:cursor-not-allowed disabled:opacity-40"
+            [disabled]="viewerIndex === viewerPosters.length - 1"
+            (click)="showNextPoster()"
+          >
+            Berikutnya →
+          </button>
+        </div>
+      </div>
+    </div>
 
     <section class="mb-12">
       <div class="soft-panel p-6 md:p-8">
@@ -123,13 +407,5 @@
       </div>
     </section>
 
-    <section
-      *ngIf="displayedPosters.length < allPosters.length && displayedPosters.length > 0"
-      class="text-center"
-    >
-      <button class="primary-button px-7 py-4" (click)="loadMore()">
-        Muat Lebih Banyak Poster
-      </button>
-    </section>
   </div>
 </div>

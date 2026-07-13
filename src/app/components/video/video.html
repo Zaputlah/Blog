@@ -79,7 +79,8 @@
             <input
               type="text"
               [(ngModel)]="searchQuery"
-              placeholder="Cari jadwal, rangkuman, ustadz, topik, atau video..."
+              (ngModelChange)="onSearchChange()"
+              placeholder="Cari tanggal, rangkuman, ustadz, topik, atau video..."
               class="input-field pr-11"
             />
             <button
@@ -106,7 +107,7 @@
       </div>
     </section>
 
-    <section class="mb-12" *ngIf="filteredKajianNotes.length > 0">
+    <section id="rangkuman-kajian" class="mb-12 scroll-mt-6" *ngIf="filteredKajianNotes.length > 0">
       <div class="mb-6 flex items-end justify-between gap-4">
         <div>
           <p class="eyebrow">Catatan</p>
@@ -120,7 +121,7 @@
       </div>
 
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <article *ngFor="let note of filteredKajianNotes" class="content-card">
+        <article *ngFor="let note of paginatedKajianNotes" class="content-card">
           <div class="quiet-block p-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <span class="badge">{{ note.topic }}</span>
@@ -165,6 +166,46 @@
           </div>
         </article>
       </div>
+
+      <nav
+        *ngIf="kajianNotesTotalPages > 1"
+        class="mt-7 flex flex-col gap-4 rounded-xl border border-[#dfe8e3] bg-[#fbfcfb] p-4 sm:flex-row sm:items-center sm:justify-between"
+        aria-label="Navigasi halaman rangkuman kajian"
+      >
+        <p class="text-center text-sm font-semibold text-[#5f6f6a] sm:text-left">
+          Menampilkan {{ kajianNotesPageStart }}–{{ kajianNotesPageEnd }} dari
+          {{ filteredKajianNotes.length }} rangkuman
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <button
+            type="button"
+            (click)="goToKajianNotesPage(kajianNotesPage - 1)"
+            [disabled]="kajianNotesPage === 1"
+            class="secondary-button px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Sebelumnya
+          </button>
+          <button
+            *ngFor="let page of kajianNotesPageNumbers"
+            type="button"
+            (click)="goToKajianNotesPage(page)"
+            [attr.aria-current]="page === kajianNotesPage ? 'page' : null"
+            [class]="page === kajianNotesPage ? 'filter-button-active' : 'filter-button'"
+            class="min-w-10 px-3 py-2"
+          >
+            {{ page }}
+          </button>
+          <button
+            type="button"
+            (click)="goToKajianNotesPage(kajianNotesPage + 1)"
+            [disabled]="kajianNotesPage === kajianNotesTotalPages"
+            class="secondary-button px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Berikutnya
+          </button>
+        </div>
+      </nav>
     </section>
 
     <section class="mb-12" *ngIf="filteredBlokMSchedules.length > 0">

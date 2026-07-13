@@ -46,8 +46,61 @@ export class Video {
   showVideoPlayer: boolean = false;
   activeFilter: string = 'all';
   searchQuery: string = '';
+  kajianNotesPage: number = 1;
+  readonly kajianNotesPageSize: number = 4;
 
   kajianNotes: KajianNote[] = [
+    {
+      title: 'Urgensi dan Hakikat Kesabaran dalam Kehidupan Seorang Muslim',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      date: 'Kajian Offline - Sabtu, 11 Juli 2026',
+      sortDate: '2026-07-11',
+      location: 'Masjid Nurul Iman Blok M',
+      topic: 'Kesabaran',
+      summary:
+        'Kajian ini membahas urgensi dan hakikat kesabaran: janji keberuntungan, pahala tanpa batas, kebersamaan dan cinta Allah, serta pemahaman bahwa sabar bukan sikap pasif, melainkan kemampuan menahan diri sambil tetap berikhtiar secara maksimal.',
+      points: [
+        'Allah menjanjikan keberuntungan bagi orang yang bersabar dalam Surah Ali Imran ayat 200. Berbeda dengan harapan duniawi yang tidak memiliki garansi, janji Allah bagi orang yang sabar adalah sebuah kepastian.',
+        'Ketika kehilangan sesuatu, kesabaran atas kehilangan tersebut lebih baik daripada nikmat yang diambil itu sendiri. Karena itu, seorang mukmin tidak hanya melihat apa yang hilang, tetapi juga karunia sabar yang Allah berikan.',
+        'Kesabaran ketika tertimpa musibah atau kehilangan mendatangkan pahala tanpa batas, bighairi hisab, sebagaimana disebutkan dalam Surah Az-Zumar ayat 10.',
+        'Allah membersamai orang-orang yang sabar dengan kebersamaan khusus yang menghadirkan pertolongan dan ketenangan hati atau tumakninatul qalb.',
+        'Sabar bukan berarti tersiksa, diam tanpa tindakan, atau pasrah secara pasif. Sabar adalah keterampilan menahan diri dari hawa nafsu dan amarah agar tetap berada di jalan Allah.',
+        'Sabar dan takwa merupakan benteng yang kokoh dari makar serta tipu daya musuh.',
+        'Allah mencintai orang-orang yang sabar, wallahu yuhibbus shabirin, sebagaimana disebutkan dalam Surah Ali Imran ayat 146.',
+        'Contoh dalam pekerjaan: ketika sudah melamar pekerjaan tetapi belum diterima, sabar berarti menerima bahwa Allah memiliki rencana terbaik sambil terus memperbaiki diri dan berikhtiar. Keadaan tersebut juga menjadi kesempatan memperoleh pahala tanpa batas.',
+        'Contoh menerima takdir: seseorang mungkin terpaksa masuk ke sekolah yang semula tidak diinginkan, tetapi kemudian justru memperoleh banyak kebaikan di sana. Kondisi yang tidak sesuai harapan belum tentu buruk bagi masa depannya.',
+        'Contoh dalam rumah tangga: ketika pasangan tidak sengaja menumpahkan gula, sabar dipraktikkan dengan menahan tatapan tidak suka, ucapan kasar, bahkan ekspresi kecil seperti kata “uf”.',
+        'Saat menghadapi PHK atau kehilangan, sabar bukan alasan untuk menyerah. Seorang mukmin harus tetap kuat, menjaga kualitas diri, dan berikhtiar dengan totalitas. Kesabaran menjadi bahan bakar untuk terus berjuang.',
+        'Mukmin yang sabar tetap menjadi al-mukminul qawi: kuat, bersungguh-sungguh dalam bekerja, dan tidak menyerah kepada keadaan. Sabar berjalan bersama usaha, bukan menggantikannya.',
+        'Kesabaran dan keyakinan atau yaqin adalah kunci untuk mencapai level tertinggi dalam agama maupun dunia. Orang yang sampai pada level tersebut bukan orang yang santai, tetapi orang yang terus berjuang dan istikamah.',
+      ],
+    },
+    {
+      title: 'Kisah Nabi Luth dan Peringatan bagi Umat Manusia',
+      speaker: 'Ustadz Khalid Basalamah',
+      date: 'Kajian Offline - Sabtu, 11 Juli 2026',
+      sortDate: '2026-07-11',
+      location: 'Masjid Nurul Iman Blok M',
+      topic: 'Kisah Para Nabi',
+      summary:
+        'Kajian serial kisah para nabi ini membahas perjalanan dakwah Nabi Luth alaihissalam kepada kaum Sodom, akibat dari pendustaan dan kemungkaran mereka, serta pentingnya menjaga iman, mensyukuri nikmat Allah, dan berdakwah dengan ilmu, keikhlasan, hikmah, dan kesabaran.',
+      points: [
+        'Keimanan merupakan fondasi kebahagiaan dunia dan akhirat sekaligus syarat utama diterimanya amal saleh. Iman perlu dijaga dengan ketaatan karena dapat bertambah dengan amal saleh dan berkurang akibat kemaksiatan.',
+        'Syukur diwujudkan dengan menyadari seluruh fasilitas kehidupan sebagai anugerah Allah, memanfaatkannya dalam perkara halal, meningkatkan ketaatan, dan berbagi kebaikan sesuai kemampuan.',
+        'Mempelajari kisah para nabi, sahabat, dan ulama membantu generasi muda memiliki teladan yang benar serta melindungi mereka dari pengaruh figur dan lingkungan yang menyesatkan.',
+        'Nabi Luth alaihissalam merupakan kerabat Nabi Ibrahim alaihissalam dan termasuk orang yang pertama beriman kepada beliau. Nabi Luth kemudian diutus kepada penduduk Sodom di kawasan sekitar Laut Mati.',
+        'Kaum Sodom melakukan perbuatan keji dan kemungkaran secara terang-terangan, mendustakan risalah Nabi Luth, serta menantang datangnya azab Allah. Kisah ini menjadi peringatan agar manusia tidak menormalisasi kemungkaran.',
+        'Ketika para malaikat datang dalam rupa pemuda sebagai tamu Nabi Luth, kaumnya berusaha mengganggu mereka. Para malaikat kemudian menjelaskan identitas dan tugas mereka serta memerintahkan Nabi Luth meninggalkan negeri itu pada akhir malam.',
+        'Nabi Luth diselamatkan bersama anggota keluarganya yang beriman. Istrinya tidak ikut selamat karena mendukung kaumnya dan mengkhianati dakwah beliau.',
+        'Allah membinasakan kaum Sodom setelah mereka terus mendustakan peringatan. Dalam kajian dijelaskan bahwa mereka mengalami kebutaan sebagai azab awal, kemudian negeri mereka dibalik dan dihujani batu.',
+        'Bekas negeri kaum yang diazab tidak semestinya dijadikan tempat bersenang-senang. Seorang Muslim diarahkan melewatinya dengan rasa takut, mengambil pelajaran, dan mengingat akibat kedurhakaan kepada Allah.',
+        'Dakwah adalah amal mulia yang dicintai Allah sebagaimana makna Surah Fussilat ayat 33. Dakwah harus dibangun di atas ilmu, keikhlasan, hikmah, dan kesabaran, bukan sekadar semangat atau perdebatan.',
+        'Tugas seorang dai adalah menyampaikan kebenaran dengan cara yang baik. Hidayah merupakan hak Allah, sehingga penolakan manusia tidak boleh membuat seorang dai meninggalkan kelembutan dan kesabaran.',
+        'Orang yang mengajak kepada kebaikan memperoleh pahala seperti orang yang mengikutinya tanpa mengurangi pahala mereka. Ilmu dan jejak dakwah yang bermanfaat dapat terus mengalir sebagai amal jariyah.',
+        'Kisah Nabi Luth mengajarkan pentingnya amar makruf nahi mungkar, keteguhan menghadapi tekanan lingkungan, dan keyakinan bahwa perlindungan serta keselamatan sejati datang dari Allah.',
+        'Langkah praktis dari kajian ini adalah memperkuat iman, menutup pintu-pintu maksiat, memilih lingkungan yang baik, mempelajari sejarah para nabi, dan menyampaikan ilmu sesuai kapasitas dengan adab yang benar.',
+      ],
+    },
     {
       title: 'Kesabaran Memiliki Nilai yang Lebih Tinggi daripada Nikmat yang Hilang',
       speaker: 'Ustadz Muhammad Nuzul Dzikri',
@@ -392,6 +445,32 @@ export class Video {
     );
   }
 
+  get paginatedKajianNotes(): KajianNote[] {
+    const startIndex = (this.kajianNotesPage - 1) * this.kajianNotesPageSize;
+    return this.filteredKajianNotes.slice(startIndex, startIndex + this.kajianNotesPageSize);
+  }
+
+  get kajianNotesTotalPages(): number {
+    return Math.ceil(this.filteredKajianNotes.length / this.kajianNotesPageSize);
+  }
+
+  get kajianNotesPageNumbers(): number[] {
+    return Array.from({ length: this.kajianNotesTotalPages }, (_, index) => index + 1);
+  }
+
+  get kajianNotesPageStart(): number {
+    return this.filteredKajianNotes.length
+      ? (this.kajianNotesPage - 1) * this.kajianNotesPageSize + 1
+      : 0;
+  }
+
+  get kajianNotesPageEnd(): number {
+    return Math.min(
+      this.kajianNotesPage * this.kajianNotesPageSize,
+      this.filteredKajianNotes.length
+    );
+  }
+
   // Data untuk featured videos
   featuredVideos = [
     {
@@ -694,18 +773,47 @@ export class Video {
   }
 
   filterNotesBySearch(notes: KajianNote[]): KajianNote[] {
-    const query = this.searchQuery.toLowerCase().trim();
+    const query = this.normalizeSearchText(this.searchQuery);
     if (!query) return notes;
 
-    return notes.filter(
-      (note) =>
-        note.title.toLowerCase().includes(query) ||
-        note.speaker.toLowerCase().includes(query) ||
-        note.date.toLowerCase().includes(query) ||
-        note.location.toLowerCase().includes(query) ||
-        note.topic.toLowerCase().includes(query) ||
-        note.summary.toLowerCase().includes(query) ||
-        note.points.some((point) => point.toLowerCase().includes(query))
+    return notes.filter((note) => {
+      const [year, month, day] = note.sortDate.split('-');
+      const numericDateAliases = `${note.sortDate} ${day}-${month}-${year} ${day}/${month}/${year}`;
+      const searchableText = [
+        note.title,
+        note.speaker,
+        note.date,
+        numericDateAliases,
+        note.location,
+        note.topic,
+        note.summary,
+        ...note.points,
+      ].join(' ');
+
+      return this.normalizeSearchText(searchableText).includes(query);
+    });
+  }
+
+  private normalizeSearchText(value: string): string {
+    const englishToIndonesianMonths: Record<string, string> = {
+      january: 'januari',
+      february: 'februari',
+      march: 'maret',
+      april: 'april',
+      may: 'mei',
+      june: 'juni',
+      july: 'juli',
+      august: 'agustus',
+      september: 'september',
+      october: 'oktober',
+      november: 'november',
+      december: 'desember',
+    };
+
+    return Object.entries(englishToIndonesianMonths).reduce(
+      (text, [englishMonth, indonesianMonth]) =>
+        text.replace(new RegExp(`\\b${englishMonth}\\b`, 'g'), indonesianMonth),
+      value.toLowerCase().trim()
     );
   }
 
@@ -722,6 +830,24 @@ export class Video {
   // Clear search
   clearSearch() {
     this.searchQuery = '';
+    this.kajianNotesPage = 1;
+  }
+
+  onSearchChange() {
+    this.kajianNotesPage = 1;
+  }
+
+  goToKajianNotesPage(page: number) {
+    if (page < 1 || page > this.kajianNotesTotalPages || page === this.kajianNotesPage) return;
+
+    this.kajianNotesPage = page;
+
+    setTimeout(() => {
+      document.getElementById('rangkuman-kajian')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
   }
 
   // Method untuk memutar video langsung di tempat
@@ -758,6 +884,7 @@ export class Video {
   // Filter videos by type
   filterVideos(type: string) {
     this.activeFilter = type;
+    this.kajianNotesPage = 1;
   }
 
   // Get button classes based on active filter
