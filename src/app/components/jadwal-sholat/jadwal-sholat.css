@@ -1,0 +1,64 @@
+.filter-panel { margin-bottom: 2rem; padding: 1.25rem; }
+.filter-grid { display: grid; grid-template-columns: 1.1fr 1.3fr 0.8fr 0.7fr auto; gap: 0.9rem; align-items: end; }
+label span { display: block; margin-bottom: 0.45rem; color: var(--heading); font-size: 0.8rem; font-weight: 800; }
+select:disabled, input:disabled, button:disabled { cursor: not-allowed; opacity: 0.58; }
+.search-button { min-height: 50px; }
+
+.status-panel { margin: 2rem auto; max-width: 560px; padding: 2rem; text-align: center; }
+.status-panel h2 { color: var(--heading); font-size: 1.25rem; font-weight: 800; }
+.status-panel p { margin: 0.5rem 0 1.25rem; color: var(--muted); }
+.loader { width: 2rem; height: 2rem; margin: 0 auto 1rem; border: 3px solid var(--line); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.today-card { margin-bottom: 2.5rem; overflow: hidden; border: 1px solid color-mix(in srgb, var(--green) 45%, var(--line)); border-radius: 12px; background: linear-gradient(135deg, #123d34, #1f6f5b); color: white; }
+.today-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.6rem 1.8rem; border-bottom: 1px solid rgba(255,255,255,0.15); }
+.today-kicker { margin-bottom: 0.35rem; color: #f1d28f; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; }
+.today-heading h2 { font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 800; line-height: 1.2; }
+.today-heading div > p:last-child { margin-top: 0.45rem; color: #cfe2dc; }
+.location-badge { flex: none; border: 1px solid rgba(255,255,255,0.22); border-radius: 999px; background: rgba(255,255,255,0.1); padding: 0.38rem 0.7rem; font-size: 0.72rem; font-weight: 700; }
+.prayer-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
+.prayer-time { padding: 1.25rem 0.7rem; text-align: center; }
+.prayer-time + .prayer-time { border-left: 1px solid rgba(255,255,255,0.12); }
+.prayer-time span { display: block; color: #cfe2dc; font-size: 0.76rem; font-weight: 600; }
+.prayer-time strong { display: block; margin-top: 0.3rem; font-size: 1.15rem; }
+
+.schedule-section { margin-bottom: 2rem; }
+.schedule-title { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.schedule-title h2 { margin-top: 0.2rem; color: var(--heading); font-size: 1.7rem; font-weight: 800; }
+.schedule-title > p { color: var(--muted); font-size: 0.9rem; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; min-width: 900px; border-collapse: collapse; text-align: center; }
+th { background: var(--soft); color: var(--heading); font-size: 0.73rem; letter-spacing: 0.04em; text-transform: uppercase; }
+th, td { padding: 0.9rem 0.75rem; border-bottom: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--hover); }
+td { color: var(--ink); font-size: 0.9rem; }
+td:first-child { min-width: 130px; text-align: left; }
+td:first-child strong { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center; margin-right: 0.5rem; border-radius: 50%; background: var(--chip); color: var(--heading); }
+td:first-child span { color: var(--muted); font-size: 0.83rem; }
+td:first-child em { margin-left: 0.5rem; color: var(--green); font-size: 0.68rem; font-style: normal; font-weight: 800; }
+.today-row { background: color-mix(in srgb, var(--chip) 75%, transparent); }
+.today-row td:first-child strong { background: var(--green); color: white; }
+.source-note { margin-top: 0.85rem; color: var(--muted); font-size: 0.78rem; text-align: right; }
+
+@media (max-width: 980px) {
+  .filter-grid { grid-template-columns: repeat(2, 1fr); }
+  .search-button { grid-column: 1 / -1; }
+  .prayer-grid { grid-template-columns: repeat(4, 1fr); }
+  .prayer-time:nth-child(5) { border-left: 0; }
+  .prayer-time:nth-child(n+5) { border-top: 1px solid rgba(255,255,255,0.12); }
+}
+
+@media (max-width: 600px) {
+  .filter-panel { padding: 1rem; }
+  .filter-grid { grid-template-columns: 1fr; }
+  .search-button { grid-column: auto; }
+  .today-heading { display: block; padding: 1.3rem; }
+  .location-badge { display: inline-flex; margin-top: 1rem; }
+  .prayer-grid { grid-template-columns: repeat(2, 1fr); }
+  .prayer-time:nth-child(odd) { border-left: 0; }
+  .prayer-time:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,0.12); }
+  .schedule-title { display: block; }
+  .schedule-title > p { margin-top: 0.4rem; }
+  .source-note { text-align: left; }
+}

@@ -1,0 +1,135 @@
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Waktu Ibadah</p>
+      <h1>Jadwal Sholat</h1>
+      <p>
+        Temukan waktu sholat harian dan jadwal lengkap satu bulan untuk kabupaten atau kota Anda.
+      </p>
+    </section>
+
+    <section class="soft-panel filter-panel">
+      <div class="filter-grid">
+        <label>
+          <span>Provinsi</span>
+          <select
+            class="input-field"
+            [(ngModel)]="selectedProvince"
+            (ngModelChange)="onProvinceChange()"
+            [disabled]="loadingProvinces"
+          >
+            <option *ngIf="loadingProvinces" value="">Memuat provinsi...</option>
+            <option *ngFor="let province of provinces" [value]="province">{{ province }}</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Kabupaten / Kota</span>
+          <select class="input-field" [(ngModel)]="selectedCity" [disabled]="loadingCities">
+            <option value="">{{ loadingCities ? 'Memuat kota...' : 'Pilih kabupaten/kota' }}</option>
+            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Bulan</span>
+          <select class="input-field" [(ngModel)]="selectedMonth">
+            <option *ngFor="let month of months; let i = index" [ngValue]="i + 1">{{ month }}</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Tahun</span>
+          <input class="input-field" type="number" min="2026" [(ngModel)]="selectedYear" />
+        </label>
+
+        <button
+          class="primary-button search-button"
+          type="button"
+          (click)="loadSchedule()"
+          [disabled]="loadingSchedule || loadingCities || !selectedCity"
+        >
+          {{ loadingSchedule ? 'Memuat...' : 'Tampilkan Jadwal' }}
+        </button>
+      </div>
+    </section>
+
+    <section *ngIf="error" class="soft-panel status-panel" role="alert">
+      <h2>Jadwal belum bisa dimuat</h2>
+      <p>{{ error }}</p>
+      <button class="secondary-button" type="button" (click)="loadProvinces()">Coba Lagi</button>
+    </section>
+
+    <section *ngIf="loadingSchedule" class="soft-panel status-panel" aria-live="polite">
+      <div class="loader" aria-hidden="true"></div>
+      <h2>Menyiapkan jadwal</h2>
+      <p>Mengambil data waktu sholat dari EQuran.id...</p>
+    </section>
+
+    <ng-container *ngIf="schedule && !loadingSchedule">
+      <section class="today-card" *ngIf="highlightedSchedule as featured">
+        <div class="today-heading">
+          <div>
+            <p class="today-kicker">{{ highlightLabel }}</p>
+            <h2>{{ featured.hari }}, {{ featured.tanggal }} {{ schedule.bulan_nama }} {{ schedule.tahun }}</h2>
+            <p>{{ schedule.kabkota }}, {{ schedule.provinsi }}</p>
+          </div>
+          <span class="location-badge">Waktu setempat</span>
+        </div>
+
+        <div class="prayer-grid">
+          <div class="prayer-time" *ngFor="let prayer of prayerTimes">
+            <span>{{ prayer.label }}</span>
+            <strong>{{ featured[prayer.key] }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="schedule-section">
+        <div class="schedule-title">
+          <div>
+            <p class="eyebrow">Jadwal Bulanan</p>
+            <h2>{{ schedule.bulan_nama }} {{ schedule.tahun }}</h2>
+          </div>
+          <p>{{ schedule.jadwal.length }} hari · {{ schedule.kabkota }}</p>
+        </div>
+
+        <div class="table-wrap content-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Imsak</th>
+                <th>Subuh</th>
+                <th>Terbit</th>
+                <th>Dhuha</th>
+                <th>Dzuhur</th>
+                <th>Ashar</th>
+                <th>Maghrib</th>
+                <th>Isya</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of schedule.jadwal; trackBy: trackSchedule" [class.today-row]="isToday(item)">
+                <td>
+                  <strong>{{ item.tanggal }}</strong>
+                  <span>{{ item.hari }}</span>
+                  <em *ngIf="isToday(item)">Hari ini</em>
+                </td>
+                <td>{{ item.imsak }}</td>
+                <td>{{ item.subuh }}</td>
+                <td>{{ item.terbit }}</td>
+                <td>{{ item.dhuha }}</td>
+                <td>{{ item.dzuhur }}</td>
+                <td>{{ item.ashar }}</td>
+                <td>{{ item.maghrib }}</td>
+                <td>{{ item.isya }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="source-note">Sumber data: Bimas Islam Kementerian Agama RI melalui EQuran.id.</p>
+      </section>
+    </ng-container>
+  </div>
+</div>
