@@ -1,22 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
-interface KajianSchedule {
-  ustadz: string;
-  topic: string;
-  day: string;
-  time: string;
-  location: string;
-  platform: string;
-  note: string;
-  youtubeUrl: string;
-  sourceUrl: string;
-  sourceLabel: string;
-  group: 'blokm' | 'dynamic';
-}
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { Subscription, timeout } from 'rxjs';
 
 interface KajianNote {
   title: string;
@@ -31,23 +19,165 @@ interface KajianNote {
   sourceLabel?: string;
 }
 
+interface ApiKajian {
+  id: string;
+  tema: string | null;
+  pemateri: string | null;
+  tanggal: string | null;
+  eventDate: string | null;
+  hari: string | null;
+  waktu: string | null;
+  lokasi: string | null;
+  kota: string | null;
+  alamat: string | null;
+  penyelenggara: string | null;
+  wilayah?: { kabkota: string | null; provinsi: string | null };
+  image?: { url: string | null; width: number | null; height: number | null };
+  sourceUrl: string | null;
+}
+
+interface ApiKajianResponse {
+  data: ApiKajian[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+}
+
 @Component({
   selector: 'app-video',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule],
   templateUrl: './video.html',
   styleUrls: ['./video.css'],
 })
-export class Video {
-  constructor(private router: Router, private sanitizer: DomSanitizer) {}
+export class Video implements OnInit, OnDestroy {
+  private readonly kajianApiUrl = 'https://equran.id/api/v2/kajian';
+  private readonly subscriptions = new Subscription();
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  private apiRequestId = 0;
+
+  constructor(
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   // Video yang sedang diputar
   currentVideo: any = null;
   showVideoPlayer: boolean = false;
   activeFilter: string = 'all';
   searchQuery: string = '';
+  selectedNoteMode: 'all' | 'online' | 'offline' = 'all';
   kajianNotesPage: number = 1;
   readonly kajianNotesPageSize: number = 4;
+  apiKajian: ApiKajian[] = [];
+  apiKajianCities: string[] = [];
+  selectedApiCity = '';
+  upcomingOnly = true;
+  apiKajianPage = 1;
+  apiKajianTotal = 0;
+  apiKajianTotalPages = 1;
+  loadingApiKajian = false;
+  loadingMoreApiKajian = false;
+  apiKajianError = '';
+
+  ngOnInit(): void {
+    this.loadApiKajian();
+    this.loadApiKajianCities();
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.subscriptions.unsubscribe();
+  }
+
+  loadApiKajian(reset = true): void {
+    const requestId = ++this.apiRequestId;
+    if (reset) {
+      this.apiKajianPage = 1;
+      this.loadingApiKajian = true;
+    } else {
+      this.loadingMoreApiKajian = true;
+    }
+    this.apiKajianError = '';
+
+    const params = new URLSearchParams({
+      page: String(this.apiKajianPage),
+      limit: '12',
+    });
+    if (this.searchQuery.trim()) params.set('q', this.searchQuery.trim());
+    if (this.selectedApiCity) params.set('kota', this.selectedApiCity);
+    if (this.upcomingOnly) params.set('upcoming', '1');
+
+    const request = this.http
+      .get<ApiKajianResponse>(`${this.kajianApiUrl}?${params.toString()}`)
+      .pipe(timeout(12000))
+      .subscribe({
+        next: (response) => {
+          if (requestId !== this.apiRequestId) return;
+          const items = Array.isArray(response.data) ? response.data : [];
+          this.apiKajian = reset ? items : [...this.apiKajian, ...items];
+          this.apiKajianTotal = response.pagination?.total || items.length;
+          this.apiKajianTotalPages = response.pagination?.totalPages || 1;
+          this.loadingApiKajian = false;
+          this.loadingMoreApiKajian = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: HttpErrorResponse | any) => {
+          if (requestId !== this.apiRequestId) return;
+          this.loadingApiKajian = false;
+          this.loadingMoreApiKajian = false;
+          this.apiKajianError =
+            error.name === 'TimeoutError'
+              ? 'Koneksi ke server kajian terlalu lama.'
+              : error.status === 0
+                ? 'Tidak dapat terhubung ke EQuran.id.'
+                : 'Info kajian belum bisa dimuat. Silakan coba lagi.';
+          this.cdr.markForCheck();
+        },
+      });
+    this.subscriptions.add(request);
+  }
+
+  loadMoreApiKajian(): void {
+    if (this.apiKajianPage >= this.apiKajianTotalPages || this.loadingMoreApiKajian) return;
+    this.apiKajianPage += 1;
+    this.loadApiKajian(false);
+  }
+
+  loadApiKajianCities(): void {
+    const request = this.http
+      .get<ApiKajianResponse>(`${this.kajianApiUrl}?limit=60`)
+      .pipe(timeout(12000))
+      .subscribe({
+        next: (response) => {
+          this.apiKajianCities = Array.from(
+            new Set(
+              (response.data || [])
+                .map((item) => item.kota)
+                .filter((city): city is string => !!city),
+            ),
+          ).sort((a, b) => a.localeCompare(b, 'id'));
+          this.cdr.markForCheck();
+        },
+      });
+    this.subscriptions.add(request);
+  }
+
+  onApiFilterChange(): void {
+    this.loadApiKajian();
+  }
+
+  get showApiKajian(): boolean {
+    return this.activeFilter === 'all' || this.activeFilter === 'api';
+  }
+
+  get canLoadMoreApiKajian(): boolean {
+    return this.apiKajianPage < this.apiKajianTotalPages;
+  }
+
+  onPosterError(event: Event): void {
+    (event.target as HTMLImageElement).style.display = 'none';
+  }
 
   kajianNotes: KajianNote[] = [
     {
@@ -361,73 +491,9 @@ export class Video {
     },
   ];
 
-  kajianSchedules: KajianSchedule[] = [
-    {
-      ustadz: 'Ustadz Muhammad Nuzul Dzikri',
-      topic: 'Kajian rutin Sabtu sore',
-      day: 'Setiap Sabtu',
-      time: '16.30/17.00 WIB sampai menjelang adzan Maghrib',
-      location: 'Masjid Nurul Iman Blok M Square lt. 7, Jakarta Selatan',
-      platform: 'Offline; biasanya juga dapat dipantau melalui kanal Masjid Nurul Iman',
-      note: 'Jadwal ini dikenal rutin di Blok M. Perubahan waktu, tema, atau libur kajian bisa dilihat di Instagram Masjid Nurul Iman dan media sosial Ustadz Muhammad Nuzul Dzikri.',
-      youtubeUrl: 'https://www.youtube.com/@MuhammadNuzulDzikri',
-      sourceUrl: 'https://www.instagram.com/masjidnuruliman/',
-      sourceLabel: 'Instagram Masjid Nurul Iman',
-      group: 'blokm',
-    },
-    {
-      ustadz: 'Ustadz Khalid Basalamah',
-      topic: 'Kajian rutin dan tabligh akbar',
-      day: 'Rabu malam',
-      time: '18.30-20.00 WIB',
-      location: 'Masjid Nurul Iman Blok M Square lt. 7, Jakarta Selatan',
-      platform: 'Offline; rekaman/live mengikuti pengumuman KHB Official',
-      note: 'Umumnya dijadwalkan Rabu malam, baik pekanan tertentu atau dua mingguan. Perubahan waktu, tema, atau tabligh akbar dapat dipantau melalui Info KHB Official dan kanal resmi Ustadz Khalid Basalamah.',
-      youtubeUrl: 'https://www.youtube.com/c/khalidbasalamah',
-      sourceUrl: 'https://www.instagram.com/infokhbofficial/',
-      sourceLabel: 'Instagram Info KHB Official',
-      group: 'blokm',
-    },
-    {
-      ustadz: 'Ustadz Firanda Andirja',
-      topic: 'Kajian rutin dan tabligh akbar lintas lokasi',
-      day: 'Selasa dan Ahad',
-      time: 'Selasa ba’da Maghrib; Ahad 09.30 WIB-selesai',
-      location:
-        'Selasa: Masjid Baiturrahman, Pondok Pinang, Jakarta Selatan; Ahad: Masjid Jami Al-Barkah, Cileungsi, Bogor',
-      platform: 'YouTube dan Facebook Ustadz Firanda Andirja Official',
-      note: 'Jadwal Ustadz Firanda bersifat dinamis dan dapat berpindah lokasi. Jadwal rinci, poster kajian, tabligh akbar, dan perubahan waktu dipantau melalui kanal resmi beliau.',
-      youtubeUrl: 'https://www.youtube.com/@FirandaAndirjaOfficial',
-      sourceUrl: 'https://firanda.com/',
-      sourceLabel: 'Website Firanda Official',
-      group: 'dynamic',
-    },
-    {
-      ustadz: 'Ustadz Syafiq Riza Basalamah',
-      topic: 'Kajian tematik, tabligh akbar, dan kajian keluarga',
-      day: 'Dinamis mengikuti poster resmi',
-      time: 'Pagi, sore, atau malam mengikuti jadwal terbaru',
-      location: 'Berpindah lokasi, antara lain Jakarta, Jember, dan kota lainnya',
-      platform: 'Website resmi, YouTube, Facebook, dan SRB Apps',
-      note: 'Jadwal Ustadz Syafiq bersifat dinamis dan sering berpindah tempat. Jadwal terbaru dan rekaman kajian dapat dipantau melalui website resmi serta channel YouTube Syafiq Riza Basalamah Official.',
-      youtubeUrl: 'https://www.youtube.com/@SyafiqRizaBasalamahOfficial',
-      sourceUrl: 'https://www.syafiqrizabasalamah.id/',
-      sourceLabel: 'Website SRB Official',
-      group: 'dynamic',
-    },
-  ];
-
-  get filteredBlokMSchedules() {
-    return this.filteredSchedules.filter((schedule) => schedule.group === 'blokm');
-  }
-
-  get filteredDynamicSchedules() {
-    return this.filteredSchedules.filter((schedule) => schedule.group === 'dynamic');
-  }
-
   get filteredKajianNotes() {
     if (
-      this.activeFilter === 'schedule' ||
+      this.activeFilter === 'api' ||
       this.activeFilter === 'full' ||
       this.activeFilter === 'short'
     ) {
@@ -436,13 +502,31 @@ export class Video {
 
     let notes = this.kajianNotes;
 
+    if (this.selectedNoteMode !== 'all') {
+      notes = notes.filter((note) => {
+        const isOnline =
+          note.date.toLowerCase().includes('kajian online') ||
+          note.location.trim().toLowerCase() === 'online';
+        return this.selectedNoteMode === 'online' ? isOnline : !isOnline;
+      });
+    }
+
     if (this.searchQuery.trim()) {
       notes = this.filterNotesBySearch(notes);
     }
 
     return [...notes].sort((firstNote, secondNote) =>
-      secondNote.sortDate.localeCompare(firstNote.sortDate)
+      secondNote.sortDate.localeCompare(firstNote.sortDate),
     );
+  }
+
+  get showKajianNotes(): boolean {
+    return this.activeFilter === 'all' || this.activeFilter === 'notes';
+  }
+
+  selectNoteMode(mode: 'all' | 'online' | 'offline'): void {
+    this.selectedNoteMode = mode;
+    this.kajianNotesPage = 1;
   }
 
   get paginatedKajianNotes(): KajianNote[] {
@@ -467,7 +551,7 @@ export class Video {
   get kajianNotesPageEnd(): number {
     return Math.min(
       this.kajianNotesPage * this.kajianNotesPageSize,
-      this.filteredKajianNotes.length
+      this.filteredKajianNotes.length,
     );
   }
 
@@ -671,24 +755,6 @@ export class Video {
     return [...this.featuredVideos, ...this.fullVideos, ...this.shortVideos];
   }
 
-  get filteredSchedules() {
-    if (
-      this.activeFilter === 'notes' ||
-      this.activeFilter === 'full' ||
-      this.activeFilter === 'short'
-    ) {
-      return [];
-    }
-
-    let schedules = this.kajianSchedules;
-
-    if (this.searchQuery.trim()) {
-      schedules = this.filterSchedulesBySearch(schedules);
-    }
-
-    return schedules;
-  }
-
   // Get filtered videos based on active filter and search
   get filteredFullVideos() {
     let videos = this.fullVideos;
@@ -697,7 +763,7 @@ export class Video {
     if (
       this.activeFilter === 'notes' ||
       this.activeFilter === 'short' ||
-      this.activeFilter === 'schedule'
+      this.activeFilter === 'api'
     ) {
       return [];
     }
@@ -717,7 +783,7 @@ export class Video {
     if (
       this.activeFilter === 'notes' ||
       this.activeFilter === 'full' ||
-      this.activeFilter === 'schedule'
+      this.activeFilter === 'api'
     ) {
       return [];
     }
@@ -753,22 +819,7 @@ export class Video {
       (video) =>
         video.title.toLowerCase().includes(query) ||
         video.speaker.toLowerCase().includes(query) ||
-        (video.category && video.category.toLowerCase().includes(query))
-    );
-  }
-
-  filterSchedulesBySearch(schedules: KajianSchedule[]): KajianSchedule[] {
-    const query = this.searchQuery.toLowerCase().trim();
-    if (!query) return schedules;
-
-    return schedules.filter(
-      (schedule) =>
-        schedule.ustadz.toLowerCase().includes(query) ||
-        schedule.topic.toLowerCase().includes(query) ||
-        schedule.day.toLowerCase().includes(query) ||
-        schedule.location.toLowerCase().includes(query) ||
-        schedule.platform.toLowerCase().includes(query) ||
-        schedule.note.toLowerCase().includes(query)
+        (video.category && video.category.toLowerCase().includes(query)),
     );
   }
 
@@ -813,17 +864,17 @@ export class Video {
     return Object.entries(englishToIndonesianMonths).reduce(
       (text, [englishMonth, indonesianMonth]) =>
         text.replace(new RegExp(`\\b${englishMonth}\\b`, 'g'), indonesianMonth),
-      value.toLowerCase().trim()
+      value.toLowerCase().trim(),
     );
   }
 
   // Get search results count
   get searchResultsCount(): number {
     return (
-      this.filteredSchedules.length +
       this.filteredKajianNotes.length +
       this.filteredFullVideos.length +
-      this.filteredShortVideos.length
+      this.filteredShortVideos.length +
+      (this.showApiKajian ? this.apiKajianTotal : 0)
     );
   }
 
@@ -831,10 +882,13 @@ export class Video {
   clearSearch() {
     this.searchQuery = '';
     this.kajianNotesPage = 1;
+    this.loadApiKajian();
   }
 
   onSearchChange() {
     this.kajianNotesPage = 1;
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.loadApiKajian(), 350);
   }
 
   goToKajianNotesPage(page: number) {
@@ -885,10 +939,5 @@ export class Video {
   filterVideos(type: string) {
     this.activeFilter = type;
     this.kajianNotesPage = 1;
-  }
-
-  // Get button classes based on active filter
-  getButtonClass(type: string): string {
-    return this.activeFilter === type ? 'filter-button-active' : 'filter-button';
   }
 }

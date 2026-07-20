@@ -347,3 +347,58 @@ header.sticky {
     font-size: 1rem;
   }
 }
+
+/* Navigasi tab pada halaman Kajian */
+.material-filter {
+  overflow: hidden;
+}
+
+.material-tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.65rem 0;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+}
+
+.material-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.material-tab {
+  position: relative;
+  flex: none;
+  border-radius: 7px 7px 0 0;
+  padding: 0.8rem 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.material-tab:hover {
+  background: var(--hover);
+  color: var(--heading);
+}
+
+.material-tab.active {
+  background: var(--chip);
+  color: var(--heading);
+}
+
+.material-tab.active::after {
+  content: '';
+  position: absolute;
+  right: 0.8rem;
+  bottom: -1px;
+  left: 0.8rem;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--green);
+}
+
+.material-search {
+  padding: 1rem;
+}
