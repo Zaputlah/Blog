@@ -1,0 +1,111 @@
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Hikmah dan Renungan</p>
+      <h1>Quotes Islami</h1>
+      <p>
+        Kumpulan nasihat dari para nabi, ulama, dan orang-orang saleh untuk menemani refleksi
+        harian.
+      </p>
+    </section>
+
+    <section *ngIf="featuredQuote" class="featured-quote">
+      <div>
+        <p class="featured-label">Kutipan Pilihan</p>
+        <blockquote>“{{ quoteText(featuredQuote) }}”</blockquote>
+        <p class="featured-author">— {{ authorName(featuredQuote) }}</p>
+        <p *ngIf="showOriginal(featuredQuote)" class="featured-original">
+          {{ featuredQuote.original.text }}
+        </p>
+      </div>
+      <button type="button" (click)="loadRandomQuote()" [disabled]="loadingRandom">
+        {{ loadingRandom ? 'Mengacak...' : 'Kutipan Lain' }}
+      </button>
+    </section>
+
+    <section class="quotes-heading">
+      <div>
+        <p class="eyebrow">Koleksi</p>
+        <h2 class="section-title">Jelajahi Quotes</h2>
+      </div>
+      <span *ngIf="!loading">{{ totalQuotes }} kutipan</span>
+    </section>
+
+    <section *ngIf="loading" class="quote-state soft-panel" aria-live="polite">
+      <span class="quote-loader" aria-hidden="true"></span>
+      <div>
+        <h3>Memuat quotes</h3>
+        <p>Mengambil kutipan dari Islamic Network...</p>
+      </div>
+    </section>
+
+    <section *ngIf="error && !loading" class="quote-state soft-panel" role="alert">
+      <div>
+        <h3>Quotes belum tersedia</h3>
+        <p>{{ error }}</p>
+      </div>
+      <button type="button" class="secondary-button" (click)="loadQuotes(currentPage)">
+        Coba Lagi
+      </button>
+    </section>
+
+    <section *ngIf="!loading && !error" class="quote-grid">
+      <article *ngFor="let quote of quotes; trackBy: trackQuote" class="quote-card content-card">
+        <div class="quote-mark" aria-hidden="true">“</div>
+        <blockquote>{{ quoteText(quote) }}</blockquote>
+        <p *ngIf="showOriginal(quote)" class="original-text">{{ quote.original.text }}</p>
+
+        <div *ngIf="quote.tags?.length" class="quote-tags">
+          <span *ngFor="let tag of quote.tags">{{ tag }}</span>
+        </div>
+
+        <footer>
+          <div>
+            <strong>{{ authorName(quote) }}</strong>
+            <small *ngIf="quote.source && quote.source !== authorName(quote)">{{
+              quote.source
+            }}</small>
+          </div>
+          <button
+            type="button"
+            (click)="copyQuote(quote)"
+            [attr.aria-label]="'Salin kutipan dari ' + authorName(quote)"
+          >
+            {{ copiedQuoteId === quote.id ? 'Tersalin' : 'Salin' }}
+          </button>
+        </footer>
+      </article>
+    </section>
+
+    <nav
+      *ngIf="!loading && !error && totalPages > 1"
+      class="quote-pagination"
+      aria-label="Halaman quotes"
+    >
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)"
+      >
+        Sebelumnya
+      </button>
+      <span>Halaman {{ currentPage }} dari {{ totalPages }}</span>
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)"
+      >
+        Berikutnya
+      </button>
+    </nav>
+
+    <p class="quotes-source">
+      Sumber:
+      <a href="https://quotes.islamic.network/quotes/" target="_blank" rel="noopener noreferrer"
+        >Islamic Network Quotes</a
+      >. Teks asli ditampilkan untuk membantu verifikasi terjemahan.
+    </p>
+  </div>
+</div>

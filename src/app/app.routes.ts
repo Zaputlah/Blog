@@ -7,6 +7,7 @@ import { Quran } from './components/quran/quran';
 import { Doa } from './components/doa/doa';
 import { JadwalSholat } from './components/jadwal-sholat/jadwal-sholat';
 import { Game } from './components/game/game';
+import { Quotes } from './components/quotes/quotes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'beranda', pathMatch: 'full' },
@@ -19,5 +20,6 @@ export const routes: Routes = [
   { path: 'doa', component: Doa },
   { path: 'jadwal-sholat', component: JadwalSholat },
   { path: 'game', component: Game },
+  { path: 'quotes', component: Quotes },
   { path: '**', redirectTo: 'beranda' },
 ];
