@@ -7,7 +7,7 @@
         </span>
       </a>
 
-      <div class="hidden items-center gap-1 md:flex">
+      <div class="hidden items-center gap-1 lg:flex">
         <a
           routerLink="/beranda"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
@@ -57,6 +57,13 @@
         >
           Jadwal Sholat
         </a>
+        <a
+          routerLink="/game"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
+        >
+          Game
+        </a>
       </div>
 
       <div class="flex items-center gap-2">
@@ -103,7 +110,7 @@
         <button
           type="button"
           (click)="toggleMobileMenu()"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:bg-[#f7faf8] md:hidden"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:bg-[#f7faf8] lg:hidden"
           aria-label="Buka menu"
         >
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +125,7 @@
       </div>
     </div>
 
-    <div *ngIf="isMobileMenuOpen" class="mt-3 grid gap-1 border-t border-[#dfe8e3] pt-3 md:hidden">
+    <div *ngIf="isMobileMenuOpen" class="mt-3 grid gap-1 border-t border-[#dfe8e3] pt-3 lg:hidden">
       <a
         routerLink="/beranda"
         routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
@@ -174,6 +181,14 @@
         (click)="closeMobileMenu()"
       >
         Jadwal Sholat
+      </a>
+      <a
+        routerLink="/game"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Game
       </a>
       <button type="button" (click)="toggleTheme()" class="theme-toggle-mobile">
         {{ isDarkMode ? 'Mode Terang' : 'Mode Gelap' }}

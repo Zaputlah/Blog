@@ -1,0 +1,98 @@
+<div class="page-shell">
+  <div class="page-container game-container" id="game-area">
+    <section class="page-intro">
+      <p class="eyebrow">Belajar Sambil Bermain</p>
+      <h1>Game Al-Quran</h1>
+      <p>
+        Uji pengetahuan nama dan arti surah dalam kuis singkat yang dapat dimainkan tanpa login.
+      </p>
+    </section>
+
+    <section *ngIf="view === 'intro'" class="game-panel content-card">
+      <div class="game-illustration" aria-hidden="true">
+        <span>؟</span>
+      </div>
+      <div class="intro-content">
+        <span class="badge">Tebak Surah</span>
+        <h2>Seberapa kenal kamu dengan surah Al-Quran?</h2>
+        <p>Pilih nama surah yang sesuai dengan arti yang ditampilkan. Terdapat 10 soal acak.</p>
+
+        <div class="game-facts">
+          <div><strong>10</strong><span>Soal</span></div>
+          <div><strong>4</strong><span>Pilihan</span></div>
+          <div>
+            <strong>{{ highScore }}</strong
+            ><span>Skor terbaik</span>
+          </div>
+        </div>
+
+        <button type="button" class="primary-button start-button" (click)="startGame()">
+          Mulai Bermain
+        </button>
+      </div>
+    </section>
+
+    <section *ngIf="view === 'playing' && currentQuestion" class="quiz-panel content-card">
+      <div class="quiz-header">
+        <span>Soal {{ currentIndex + 1 }} dari {{ questions.length }}</span>
+        <strong>Skor {{ score }}</strong>
+      </div>
+      <div class="progress-track"><span [style.width.%]="progress"></span></div>
+
+      <div class="question-content">
+        <p class="question-label">Surah apakah yang memiliki arti:</p>
+        <h2>“{{ currentQuestion.surah.arti }}”</h2>
+
+        <div class="answers">
+          <button
+            *ngFor="let option of currentQuestion.options; let i = index"
+            type="button"
+            [class]="answerClass(option)"
+            [disabled]="answered"
+            (click)="selectAnswer(option)"
+          >
+            <span>{{ ['A', 'B', 'C', 'D'][i] }}</span>
+            {{ option }}
+          </button>
+        </div>
+
+        <div
+          *ngIf="answered"
+          class="feedback"
+          [class.success]="selectedAnswer === currentQuestion.surah.namaLatin"
+        >
+          <div>
+            <strong>{{
+              selectedAnswer === currentQuestion.surah.namaLatin ? 'Benar!' : 'Belum tepat'
+            }}</strong>
+            <p>
+              {{ currentQuestion.surah.namaLatin }} adalah surah ke-{{
+                currentQuestion.surah.nomor
+              }}, terdiri dari {{ currentQuestion.surah.jumlahAyat }} ayat dan diturunkan di
+              {{ currentQuestion.surah.tempatTurun }}.
+            </p>
+          </div>
+          <button type="button" class="primary-button" (click)="nextQuestion()">
+            {{ currentIndex === questions.length - 1 ? 'Lihat Hasil' : 'Soal Berikutnya' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="view === 'result'" class="result-panel content-card">
+      <p class="eyebrow">Kuis Selesai</p>
+      <div class="score-circle">
+        <strong>{{ score }}</strong
+        ><span>dari 100</span>
+      </div>
+      <h2>{{ resultMessage }}</h2>
+      <p>
+        Skor terbaikmu: <strong>{{ highScore }}</strong>
+      </p>
+      <div class="result-actions">
+        <button type="button" class="primary-button" (click)="startGame()">Main Lagi</button>
+        <button type="button" class="secondary-button" (click)="backToIntro()">Kembali</button>
+      </div>
+    </section>
+  </div>
+</div>
