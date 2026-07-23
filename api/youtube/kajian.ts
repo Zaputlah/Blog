@@ -1,4 +1,4 @@
-import { getYoutubeCacheExpiry, loadYoutubeVideos } from '../../src/youtube';
+import { getYoutubeCacheExpiry, loadYoutubeVideos } from '../../src/youtube.js';
 
 export async function GET(): Promise<Response> {
   try {
