@@ -23,6 +23,113 @@
 .api-section {
   margin-bottom: 3.5rem;
 }
+.youtube-section {
+  margin-bottom: 3.5rem;
+}
+.speaker-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+}
+.youtube-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.youtube-card {
+  min-width: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.youtube-card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--green) 45%, transparent);
+  outline-offset: 3px;
+}
+.youtube-thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #17211f;
+}
+.youtube-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 220ms ease;
+}
+.youtube-card:hover .youtube-thumbnail img {
+  transform: scale(1.025);
+}
+.video-kind,
+.video-duration {
+  position: absolute;
+  border-radius: 0.3rem;
+  padding: 0.25rem 0.45rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+.video-kind {
+  top: 0.7rem;
+  left: 0.7rem;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--heading);
+}
+.video-duration {
+  right: 0.7rem;
+  bottom: 0.7rem;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+}
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(18, 61, 52, 0.9);
+  color: white;
+  transform: translate(-50%, -50%);
+}
+.youtube-card-body {
+  padding: 1.1rem;
+}
+.youtube-card-body h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--heading);
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.youtube-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.channel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.channel-link:hover {
+  text-decoration: underline;
+}
 .section-heading {
   display: flex;
   align-items: end;
@@ -241,7 +348,8 @@
 }
 
 @media (max-width: 960px) {
-  .api-card-grid {
+  .api-card-grid,
+  .youtube-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -260,7 +368,8 @@
     min-height: auto;
     padding: 0.25rem 0;
   }
-  .api-card-grid {
+  .api-card-grid,
+  .youtube-card-grid {
     grid-template-columns: 1fr;
   }
   .poster-wrap {

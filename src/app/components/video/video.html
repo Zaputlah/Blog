@@ -42,9 +42,18 @@
         <div class="p-5">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-wrap gap-3 meta-text">
-              <span>{{ currentVideo.views }} views</span>
+              <span>
+                {{ currentVideo.publishedAt ? formatViewCount(currentVideo.views) : currentVideo.views }}
+                views
+              </span>
               <span>{{ currentVideo.duration }}</span>
-              <span>{{ currentVideo.date }}</span>
+              <span>
+                {{
+                  currentVideo.publishedAt
+                    ? (currentVideo.publishedAt | date: 'dd MMM yyyy')
+                    : currentVideo.date
+                }}
+              </span>
             </div>
             <button
               class="primary-button self-start sm:self-auto"
@@ -74,6 +83,7 @@
               let tab of [
                 { id: 'all', label: 'Semua' },
                 { id: 'api', label: 'Info Kajian' },
+                { id: 'youtube', label: 'Video Ustaz' },
                 { id: 'notes', label: 'Rangkuman' },
                 { id: 'full', label: 'Ceramah Full' },
                 { id: 'short', label: 'Ceramah Singkat' },
@@ -120,6 +130,107 @@
             </button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="video-ustaz" class="youtube-section" *ngIf="showYoutubeKajian">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Kanal Resmi YouTube</p>
+          <h2 class="section-title mt-2">Kajian Video Terbaru</h2>
+          <p class="section-description">
+            Video terbaru dari Ustadz Muhammad Nuzul Dzikri, Ustadz Khalid Basalamah, dan Ustadz
+            Firanda Andirja. Pilih pemateri untuk menemukan kajian yang ingin ditonton.
+          </p>
+        </div>
+        <span class="result-count" *ngIf="!loadingYoutubeVideos">
+          {{ filteredYoutubeVideos.length }} video
+        </span>
+      </div>
+
+      <div class="speaker-filter soft-panel" *ngIf="youtubeSpeakers.length">
+        <button
+          type="button"
+          [class]="selectedYoutubeSpeaker === 'all' ? 'filter-button-active' : 'filter-button'"
+          (click)="selectedYoutubeSpeaker = 'all'"
+        >
+          Semua Ustaz
+        </button>
+        <button
+          *ngFor="let speaker of youtubeSpeakers"
+          type="button"
+          [class]="selectedYoutubeSpeaker === speaker ? 'filter-button-active' : 'filter-button'"
+          (click)="selectedYoutubeSpeaker = speaker"
+        >
+          {{ speaker.replace('Ustadz ', '') }}
+        </button>
+      </div>
+
+      <div *ngIf="loadingYoutubeVideos" class="api-state soft-panel" aria-live="polite">
+        <span class="api-loader" aria-hidden="true"></span>
+        <div>
+          <h3>Memuat video terbaru</h3>
+          <p>Mengambil kajian dari kanal resmi YouTube...</p>
+        </div>
+      </div>
+
+      <div
+        *ngIf="youtubeVideosError && !loadingYoutubeVideos"
+        class="api-state soft-panel"
+        role="alert"
+      >
+        <div>
+          <h3>Video YouTube belum tersedia</h3>
+          <p>{{ youtubeVideosError }}</p>
+        </div>
+        <button type="button" class="secondary-button" (click)="loadYoutubeVideos()">
+          Coba Lagi
+        </button>
+      </div>
+
+      <div
+        *ngIf="!loadingYoutubeVideos && !youtubeVideosError && filteredYoutubeVideos.length === 0"
+        class="api-state soft-panel"
+      >
+        <div>
+          <h3>Video tidak ditemukan</h3>
+          <p>Coba pilih pemateri lain atau hapus kata kunci pencarian.</p>
+        </div>
+      </div>
+
+      <div *ngIf="filteredYoutubeVideos.length" class="youtube-card-grid">
+        <article
+          *ngFor="let video of filteredYoutubeVideos"
+          class="content-card youtube-card"
+          (click)="playVideoInPlace(video)"
+          tabindex="0"
+          (keydown.enter)="playVideoInPlace(video)"
+        >
+          <div class="youtube-thumbnail">
+            <img [src]="video.thumbnail" [alt]="video.title" loading="lazy" />
+            <span class="video-kind">{{ video.type === 'short' ? 'SINGKAT' : 'KAJIAN' }}</span>
+            <span class="video-duration">{{ video.duration }}</span>
+            <span class="play-icon" aria-hidden="true">&#9654;</span>
+          </div>
+          <div class="youtube-card-body">
+            <h3>{{ video.title }}</h3>
+            <p class="speaker">{{ video.speaker }}</p>
+            <div class="youtube-meta">
+              <span>{{ formatViewCount(video.views) }} ditonton</span>
+              <span>{{ video.publishedAt | date: 'dd MMM yyyy' }}</span>
+            </div>
+            <a
+              [href]="video.channelUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="channel-link"
+              (click)="$event.stopPropagation()"
+            >
+              Lihat Channel
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -483,6 +594,7 @@
     <section
       *ngIf="
         !showApiKajian &&
+        !showYoutubeKajian &&
         !showKajianNotes &&
         filteredFullVideos.length === 0 &&
         filteredShortVideos.length === 0

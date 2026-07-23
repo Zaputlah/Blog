@@ -1,5 +1,18 @@
 # Y
 
+## Konfigurasi YouTube API
+
+Halaman **Kajian** mengambil video terbaru dari kanal resmi Ustadz Muhammad Nuzul Dzikri,
+Ustadz Khalid Basalamah, dan Ustadz Firanda Andirja melalui endpoint server.
+
+1. Aktifkan **YouTube Data API v3** di Google Cloud Console.
+2. Salin `.env.example` menjadi `.env`, lalu isi `YOUTUBE_API_KEY`.
+3. Jalankan `npm run build`, kemudian `npm run serve:ssr:y`. Server akan membaca `.env`; pada
+   hosting, variabel environment dari platform juga dapat digunakan.
+
+API key hanya dibaca oleh `src/server.ts` dan tidak dikirim ke browser. Respons disimpan dalam cache
+server selama 15 menit untuk menghemat kuota API.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
 
 ## Development server

@@ -41,6 +41,24 @@ interface ApiKajianResponse {
   pagination: { page: number; limit: number; total: number; totalPages: number };
 }
 
+interface YouTubeKajianVideo {
+  id: string;
+  title: string;
+  speaker: string;
+  channelTitle: string;
+  channelUrl: string;
+  publishedAt: string;
+  thumbnail: string;
+  duration: string;
+  durationSeconds: number;
+  views: number;
+  type: 'full' | 'short';
+}
+
+interface YouTubeKajianResponse {
+  data: YouTubeKajianVideo[];
+}
+
 @Component({
   selector: 'app-video',
   standalone: true,
@@ -79,10 +97,15 @@ export class Video implements OnInit, OnDestroy {
   loadingApiKajian = false;
   loadingMoreApiKajian = false;
   apiKajianError = '';
+  youtubeVideos: YouTubeKajianVideo[] = [];
+  selectedYoutubeSpeaker = 'all';
+  loadingYoutubeVideos = false;
+  youtubeVideosError = '';
 
   ngOnInit(): void {
     this.loadApiKajian();
     this.loadApiKajianCities();
+    this.loadYoutubeVideos();
   }
 
   ngOnDestroy(): void {
@@ -169,6 +192,55 @@ export class Video implements OnInit, OnDestroy {
 
   get showApiKajian(): boolean {
     return this.activeFilter === 'all' || this.activeFilter === 'api';
+  }
+
+  get showYoutubeKajian(): boolean {
+    return this.activeFilter === 'all' || this.activeFilter === 'youtube';
+  }
+
+  get filteredYoutubeVideos(): YouTubeKajianVideo[] {
+    let videos = this.youtubeVideos;
+    if (this.selectedYoutubeSpeaker !== 'all') {
+      videos = videos.filter((video) => video.speaker === this.selectedYoutubeSpeaker);
+    }
+    if (this.searchQuery.trim()) videos = this.filterVideosBySearch(videos);
+    return videos;
+  }
+
+  get youtubeSpeakers(): string[] {
+    return Array.from(new Set(this.youtubeVideos.map((video) => video.speaker)));
+  }
+
+  loadYoutubeVideos(): void {
+    this.loadingYoutubeVideos = true;
+    this.youtubeVideosError = '';
+    const request = this.http
+      .get<YouTubeKajianResponse>('/api/youtube/kajian', { transferCache: false })
+      .pipe(timeout(15000))
+      .subscribe({
+        next: (response) => {
+          this.youtubeVideos = Array.isArray(response.data) ? response.data : [];
+          this.loadingYoutubeVideos = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: HttpErrorResponse | any) => {
+          this.loadingYoutubeVideos = false;
+          this.youtubeVideosError =
+            error.error?.code === 'YOUTUBE_API_KEY_MISSING'
+              ? 'YouTube API belum dikonfigurasi. Tambahkan YOUTUBE_API_KEY pada environment server.'
+              : error.name === 'TimeoutError'
+                ? 'Koneksi ke YouTube terlalu lama.'
+                : 'Video terbaru belum dapat dimuat. Silakan coba lagi.';
+          this.cdr.markForCheck();
+        },
+      });
+    this.subscriptions.add(request);
+  }
+
+  formatViewCount(views: number): string {
+    return new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 }).format(
+      views,
+    );
   }
 
   get canLoadMoreApiKajian(): boolean {
@@ -494,6 +566,7 @@ export class Video implements OnInit, OnDestroy {
   get filteredKajianNotes() {
     if (
       this.activeFilter === 'api' ||
+      this.activeFilter === 'youtube' ||
       this.activeFilter === 'full' ||
       this.activeFilter === 'short'
     ) {
@@ -763,7 +836,8 @@ export class Video implements OnInit, OnDestroy {
     if (
       this.activeFilter === 'notes' ||
       this.activeFilter === 'short' ||
-      this.activeFilter === 'api'
+      this.activeFilter === 'api' ||
+      this.activeFilter === 'youtube'
     ) {
       return [];
     }
@@ -783,7 +857,8 @@ export class Video implements OnInit, OnDestroy {
     if (
       this.activeFilter === 'notes' ||
       this.activeFilter === 'full' ||
-      this.activeFilter === 'api'
+      this.activeFilter === 'api' ||
+      this.activeFilter === 'youtube'
     ) {
       return [];
     }
@@ -874,6 +949,7 @@ export class Video implements OnInit, OnDestroy {
       this.filteredKajianNotes.length +
       this.filteredFullVideos.length +
       this.filteredShortVideos.length +
+      (this.showYoutubeKajian ? this.filteredYoutubeVideos.length : 0) +
       (this.showApiKajian ? this.apiKajianTotal : 0)
     );
   }
