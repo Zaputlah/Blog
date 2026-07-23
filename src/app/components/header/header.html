@@ -71,6 +71,13 @@
         >
           Quotes
         </a>
+        <a
+          routerLink="/hadits"
+          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
+        >
+          Hadis
+        </a>
       </div>
 
       <div class="flex items-center gap-2">
@@ -204,6 +211,14 @@
         (click)="closeMobileMenu()"
       >
         Quotes
+      </a>
+      <a
+        routerLink="/hadits"
+        routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
+        class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f]"
+        (click)="closeMobileMenu()"
+      >
+        Hadis
       </a>
       <button type="button" (click)="toggleTheme()" class="theme-toggle-mobile">
         {{ isDarkMode ? 'Mode Terang' : 'Mode Gelap' }}

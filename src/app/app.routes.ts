@@ -8,6 +8,7 @@ import { Doa } from './components/doa/doa';
 import { JadwalSholat } from './components/jadwal-sholat/jadwal-sholat';
 import { Game } from './components/game/game';
 import { Quotes } from './components/quotes/quotes';
+import { Hadits } from './components/hadits/hadits';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'beranda', pathMatch: 'full' },
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'jadwal-sholat', component: JadwalSholat },
   { path: 'game', component: Game },
   { path: 'quotes', component: Quotes },
+  { path: 'hadits', component: Hadits },
   { path: '**', redirectTo: 'beranda' },
 ];

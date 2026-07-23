@@ -7,6 +7,7 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 import { loadEnvFile } from 'node:process';
+import { getHaditsCacheExpiry, loadDailyHadits, searchHadits } from './hadits';
 import { getYoutubeCacheExpiry, loadYoutubeVideos } from './youtube';
 
 try {
@@ -48,6 +49,56 @@ app.get('/api/youtube/kajian', async (_req, res) => {
     }
     console.error('Gagal memuat video YouTube:', message);
     res.status(502).json({ message: 'Video YouTube belum dapat dimuat.' });
+  }
+});
+
+app.get('/api/hadits/daily', async (_req, res) => {
+  try {
+    const items = await loadDailyHadits();
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.json({ data: items, cachedUntil: getHaditsCacheExpiry() });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    if (message === 'HADITS_API_KEY_MISSING') {
+      res.status(503).json({
+        code: 'HADITS_API_KEY_MISSING',
+        message: 'Hadits API belum dikonfigurasi di server.',
+      });
+      return;
+    }
+
+    console.error('Gagal memuat hadis:', message);
+    res.status(message === 'HADITS_API_429' ? 429 : 502).json({
+      code: message.startsWith('HADITS_API_') ? message : 'HADITS_API_ERROR',
+    });
+  }
+});
+
+app.get('/api/hadits/search', async (req, res) => {
+  const query = String(req.query['q'] || '')
+    .normalize('NFKC')
+    .trim()
+    .toLocaleLowerCase('id-ID')
+    .replace(/\s+/g, ' ');
+  if (query.length < 3 || query.length > 60) {
+    res.status(400).json({
+      code: 'INVALID_QUERY',
+      message: 'Kata kunci harus terdiri dari 3–60 karakter.',
+    });
+    return;
+  }
+
+  try {
+    const items = await searchHadits(query);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.json({ data: items, query });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    console.error('Gagal mencari hadis:', message);
+    res.status(message === 'HADITS_API_429' ? 429 : 502).json({
+      code: message === 'HADITS_API_KEY_MISSING' ? message : 'HADITS_SEARCH_ERROR',
+      message: 'Pencarian hadis belum dapat digunakan.',
+    });
   }
 });
 

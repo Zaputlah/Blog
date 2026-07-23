@@ -1,0 +1,158 @@
+<div class="page-shell">
+  <div class="page-container">
+    <section class="page-intro">
+      <p class="eyebrow">Jejak Sunnah</p>
+      <h1>Hadis Pilihan</h1>
+      <p>
+        Baca teks Arab dan terjemahan hadis dari berbagai kitab. Sepuluh hadis disiapkan setiap
+        hari agar dapat dibaca tanpa membebani layanan sumber.
+      </p>
+    </section>
+
+    <section *ngIf="loading" class="hadits-state soft-panel" aria-live="polite">
+      <span class="hadits-loader" aria-hidden="true"></span>
+      <div>
+        <h2>Memuat hadis pilihan</h2>
+        <p>Menyiapkan koleksi yang tersimpan untuk hari ini...</p>
+      </div>
+    </section>
+
+    <section *ngIf="error && !loading" class="hadits-state soft-panel" role="alert">
+      <div>
+        <h2>Hadis belum tersedia</h2>
+        <p>{{ error }}</p>
+      </div>
+      <button type="button" class="secondary-button" (click)="loadHadits()">Coba Lagi</button>
+    </section>
+
+    <section class="hadits-search soft-panel" aria-labelledby="hadits-search-title">
+      <div class="search-copy">
+        <p class="eyebrow">Pencarian Hadis</p>
+        <h2 id="hadits-search-title" class="section-title">Cari berdasarkan kata kunci</h2>
+        <p>
+          Maksimal 2 pencarian baru per hari. Hasil yang sudah tersimpan selama 30 hari dapat dibuka
+          kembali tanpa mengurangi jatah.
+        </p>
+      </div>
+
+      <form (ngSubmit)="search()" class="search-form">
+        <label for="hadits-query">Kata kunci</label>
+        <div>
+          <input
+            id="hadits-query"
+            name="haditsQuery"
+            class="input-field"
+            type="search"
+            [(ngModel)]="searchQuery"
+            minlength="3"
+            maxlength="60"
+            placeholder="Contoh: sabar, shalat, sedekah"
+            autocomplete="off"
+          />
+          <button type="submit" class="primary-button" [disabled]="searching">
+            {{ searching ? 'Mencari...' : 'Cari Hadis' }}
+          </button>
+        </div>
+        <small>Tersisa {{ remainingSearches }} pencarian baru hari ini.</small>
+      </form>
+
+      <div *ngIf="searchError" class="search-alert" role="alert">
+        <strong>{{ remainingSearches === 0 ? 'Batas pencarian tercapai' : 'Pencarian belum berhasil' }}</strong>
+        <p>{{ searchError }}</p>
+      </div>
+      <p *ngIf="searchMessage && !searchError" class="search-message" aria-live="polite">
+        {{ searchMessage }}
+      </p>
+    </section>
+
+    <article
+      *ngIf="selectedHadits as hadits"
+      id="hadits-pilihan"
+      class="featured-hadits content-card"
+    >
+      <header>
+        <div>
+          <p class="eyebrow">Hadis {{ selectedIndex + 1 }} dari {{ items.length }}</p>
+          <h2>{{ collectionName(hadits.collection) }}</h2>
+        </div>
+        <span>No. {{ hadits.id }}</span>
+      </header>
+
+      <p class="arabic-text" lang="ar" dir="rtl">{{ hadits.arab }}</p>
+      <div class="translation">
+        <p class="translation-label">Terjemahan Indonesia</p>
+        <p>{{ hadits.indonesia }}</p>
+      </div>
+
+      <footer>
+        <button type="button" class="primary-button" (click)="nextHadits()">Hadis Berikutnya</button>
+        <button type="button" class="secondary-button" (click)="copyHadits()">
+          {{ copied ? 'Tersalin' : 'Salin Terjemahan' }}
+        </button>
+      </footer>
+    </article>
+
+    <section *ngIf="searchResults.length" class="search-results">
+      <div class="daily-heading">
+        <div>
+          <p class="eyebrow">Hasil Pencarian</p>
+          <h2 class="section-title">Hadis yang ditemukan</h2>
+        </div>
+        <span>{{ searchResults.length }} hasil</span>
+      </div>
+
+      <div class="hadits-grid">
+        <button
+          *ngFor="let item of searchResults; trackBy: trackHadits"
+          type="button"
+          class="hadits-card content-card"
+          [class.active]="selectedSearchHadits === item"
+          (click)="selectSearchResult(item)"
+        >
+          <span>⌕</span>
+          <div>
+            <strong>{{ collectionName(item.collection) }}</strong>
+            <small>Hadis nomor {{ item.id }}</small>
+            <p>{{ item.indonesia }}</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section *ngIf="items.length" class="daily-list">
+      <div class="daily-heading">
+        <div>
+          <p class="eyebrow">Koleksi Harian</p>
+          <h2 class="section-title">Pilih hadis untuk dibaca</h2>
+        </div>
+        <span>{{ items.length }} hadis tersimpan</span>
+      </div>
+
+      <div class="hadits-grid">
+        <button
+          *ngFor="let item of items; let index = index; trackBy: trackHadits"
+          type="button"
+          class="hadits-card content-card"
+          [class.active]="index === selectedIndex"
+          (click)="selectHadits(index)"
+        >
+          <span>{{ index + 1 }}</span>
+          <div>
+            <strong>{{ collectionName(item.collection) }}</strong>
+            <small>Hadis nomor {{ item.id }}</small>
+            <p>{{ item.indonesia }}</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <p *ngIf="items.length" class="hadits-source">
+      Sumber data: <a href="https://hadis.my" target="_blank" rel="noopener noreferrer">Hadis.my</a>.
+      Periksa kembali penomoran dan penjelasan hadis kepada sumber rujukan atau ustaz yang tepercaya.
+    </p>
+  </div>
+
+  <div *ngIf="toastMessage" class="hadits-toast" role="status" aria-live="polite">
+    {{ toastMessage }}
+  </div>
+</div>
