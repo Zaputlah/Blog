@@ -29,6 +29,8 @@
 <section
   *ngIf="isOpen"
   class="chat-panel"
+  [style.top.px]="mobilePanelTop"
+  [style.height.px]="mobilePanelHeight"
   role="dialog"
   aria-labelledby="chat-title"
   aria-describedby="chat-description"
@@ -46,7 +48,7 @@
     </button>
   </header>
 
-  <div class="chat-body">
+  <div #chatBody class="chat-body">
     <div *ngIf="!lastQuestion && !result && !error" class="welcome-message">
       <div class="assistant-bubble">
         <strong>Assalamu'alaikum</strong>
@@ -130,6 +132,7 @@
       rows="2"
       placeholder="Tulis pertanyaan Anda..."
       [disabled]="loading"
+      (focus)="handleInputFocus()"
     ></textarea>
     <button
       type="submit"
