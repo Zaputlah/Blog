@@ -2,6 +2,24 @@
   display: block;
 }
 
+nav a[class~="bg-[#f3f8f5]"] {
+  position: relative;
+  background: var(--chip) !important;
+  color: var(--heading) !important;
+  font-weight: 800;
+}
+
+nav a[class~="bg-[#f3f8f5]"]::after {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.15rem;
+  left: 0.75rem;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--green);
+  content: '';
+}
+
 .theme-toggle {
   display: inline-flex;
   width: 2.5rem;
@@ -38,4 +56,19 @@
 
 .theme-toggle-mobile:hover {
   background: var(--hover);
+}
+
+@media (max-width: 1279px) {
+  nav a[class~="bg-[#f3f8f5]"] {
+    padding-left: 1rem;
+  }
+
+  nav a[class~="bg-[#f3f8f5]"]::after {
+    top: 0.45rem;
+    right: auto;
+    bottom: 0.45rem;
+    left: 0;
+    width: 3px;
+    height: auto;
+  }
 }
