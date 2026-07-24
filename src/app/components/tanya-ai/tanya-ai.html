@@ -29,6 +29,7 @@
 <section
   *ngIf="isOpen"
   class="chat-panel"
+  [class.input-focused]="inputFocused"
   [style.top.px]="mobilePanelTop"
   [style.height.px]="mobilePanelHeight"
   role="dialog"
@@ -133,6 +134,7 @@
       placeholder="Tulis pertanyaan Anda..."
       [disabled]="loading"
       (focus)="handleInputFocus()"
+      (blur)="handleInputBlur()"
     ></textarea>
     <button
       type="submit"

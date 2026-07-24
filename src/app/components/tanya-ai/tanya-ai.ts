@@ -62,6 +62,7 @@ export class TanyaAi implements OnDestroy {
   loading = false;
   error = '';
   result: AiAskResponse | null = null;
+  inputFocused = false;
   mobilePanelTop: number | null = null;
   mobilePanelHeight: number | null = null;
 
@@ -81,13 +82,16 @@ export class TanyaAi implements OnDestroy {
     this.attachViewportListeners();
     this.updateMobileViewport();
     setTimeout(() => {
-      this.questionInput?.nativeElement.focus();
+      if (typeof window !== 'undefined' && window.innerWidth > 600) {
+        this.questionInput?.nativeElement.focus();
+      }
       this.updateMobileViewport();
     }, 0);
   }
 
   close(): void {
     this.isOpen = false;
+    this.inputFocused = false;
     this.detachViewportListeners();
     this.mobilePanelTop = null;
     this.mobilePanelHeight = null;
@@ -146,10 +150,15 @@ export class TanyaAi implements OnDestroy {
   }
 
   handleInputFocus(): void {
+    this.inputFocused = true;
     setTimeout(() => {
       this.updateMobileViewport();
       this.scrollConversationToBottom();
     }, 100);
+  }
+
+  handleInputBlur(): void {
+    this.inputFocused = false;
   }
 
   sourceLabel(type: AiSource['type']): string {

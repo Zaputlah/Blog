@@ -451,4 +451,18 @@
   .chat-composer {
     padding-bottom: max(1.6rem, calc(env(safe-area-inset-bottom) + 0.6rem));
   }
+
+  .chat-panel.input-focused {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .chat-panel.input-focused .chat-composer {
+    grid-row: 2;
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .chat-panel.input-focused .chat-body {
+    grid-row: 3;
+  }
 }
