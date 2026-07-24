@@ -53,6 +53,10 @@ body {
     color 180ms ease;
 }
 
+:root.dark .theme-logo {
+  content: url('/zaputlah-dark.png');
+}
+
 button,
 input {
   font: inherit;
