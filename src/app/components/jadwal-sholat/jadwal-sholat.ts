@@ -47,7 +47,9 @@ interface WaktuSholat {
 })
 export class JadwalSholat implements OnInit, OnDestroy {
   private readonly apiUrl = 'https://equran.id/api/v2/shalat';
+  private readonly locationStorageKey = 'zaputlah.prayerLocation';
   private readonly subscriptions = new Subscription();
+  private preferredCity = '';
 
   readonly months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -80,6 +82,7 @@ export class JadwalSholat implements OnInit, OnDestroy {
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.restoreLocation();
     this.loadProvinces();
   }
 
@@ -118,6 +121,7 @@ export class JadwalSholat implements OnInit, OnDestroy {
 
   onProvinceChange(): void {
     this.selectedCity = '';
+    this.preferredCity = '';
     this.schedule = null;
     this.loadCities(false);
   }
@@ -141,9 +145,11 @@ export class JadwalSholat implements OnInit, OnDestroy {
 
           this.cities = response.data;
           if (selectDefault) {
-            this.selectedCity = this.cities.includes('Kota Jakarta')
-              ? 'Kota Jakarta'
-              : this.cities[0] || '';
+            this.selectedCity =
+              (this.preferredCity && this.cities.includes(this.preferredCity)
+                ? this.preferredCity
+                : '') ||
+              (this.cities.includes('Kota Jakarta') ? 'Kota Jakarta' : this.cities[0] || '');
             if (this.selectedCity) this.loadSchedule();
           }
           this.cdr.markForCheck();
@@ -175,6 +181,7 @@ export class JadwalSholat implements OnInit, OnDestroy {
           this.loadingSchedule = false;
           if (response.code === 200 && response.data?.jadwal) {
             this.schedule = response.data;
+            this.saveLocation();
           } else {
             this.error = response.message || 'Jadwal sholat tidak tersedia.';
           }
@@ -222,6 +229,29 @@ export class JadwalSholat implements OnInit, OnDestroy {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private restoreLocation(): void {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      const stored = localStorage.getItem(this.locationStorageKey);
+      if (!stored) return;
+      const location = JSON.parse(stored) as { province?: unknown; city?: unknown };
+      if (typeof location.province === 'string' && typeof location.city === 'string') {
+        this.selectedProvince = location.province;
+        this.preferredCity = location.city;
+      }
+    } catch {
+      localStorage.removeItem(this.locationStorageKey);
+    }
+  }
+
+  private saveLocation(): void {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(
+      this.locationStorageKey,
+      JSON.stringify({ province: this.selectedProvince, city: this.selectedCity }),
+    );
   }
 
   private handleError(error: HttpErrorResponse | any, target: 'provinsi' | 'kota' | 'jadwal'): void {

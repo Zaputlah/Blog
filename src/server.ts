@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { loadEnvFile } from 'node:process';
 import { getHaditsCacheExpiry, loadDailyHadits, searchHadits } from './hadits';
 import { getYoutubeCacheExpiry, loadYoutubeVideos } from './youtube';
+import { askZaputlah, normalizeAiContext, normalizeAiQuestion, validateAiQuestion } from './ai';
 
 try {
   loadEnvFile();
@@ -20,6 +21,8 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+app.use(express.json({ limit: '16kb' }));
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -98,6 +101,38 @@ app.get('/api/hadits/search', async (req, res) => {
     res.status(message === 'HADITS_API_429' ? 429 : 502).json({
       code: message === 'HADITS_API_KEY_MISSING' ? message : 'HADITS_SEARCH_ERROR',
       message: 'Pencarian hadis belum dapat digunakan.',
+    });
+  }
+});
+
+app.post('/api/ai/ask', async (req, res) => {
+  const question = normalizeAiQuestion((req.body as Record<string, unknown> | undefined)?.['question']);
+  const validationError = validateAiQuestion(question);
+  if (validationError) {
+    res.status(400).json({ code: 'INVALID_QUESTION', message: validationError });
+    return;
+  }
+
+  try {
+    const result = await askZaputlah(
+      question,
+      normalizeAiContext((req.body as Record<string, unknown> | undefined)?.['context']),
+    );
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json(result);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    console.error('Tanya Zaputlah gagal:', message.split(':', 1)[0]);
+    if (message === 'GEMINI_API_KEY_MISSING') {
+      res.status(503).json({
+        code: message,
+        message: 'Gemini API belum dikonfigurasi di server.',
+      });
+      return;
+    }
+    res.status(502).json({
+      code: 'AI_SERVICE_ERROR',
+      message: 'Tanya Zaputlah belum dapat menjawab. Silakan coba lagi beberapa saat.',
     });
   }
 });

@@ -13,6 +13,19 @@ Ustadz Khalid Basalamah, dan Ustadz Firanda Andirja melalui endpoint server.
 API key hanya dibaca oleh `src/server.ts` dan tidak dikirim ke browser. Respons disimpan dalam cache
 server selama 15 menit untuk menghemat kuota API.
 
+## Konfigurasi Tanya Zaputlah
+
+Bubble chat **Tanya Zaputlah** tersedia di seluruh halaman. Fitur ini menggunakan Gemini untuk
+mengklasifikasikan pertanyaan dan merangkum jawaban. Sumber jawaban dicari dari EQuran.id dan
+Hadits API; Gemini tidak diminta membuat sumber sendiri.
+
+1. Isi `GEMINI_API_KEY` pada `.env` untuk pengembangan lokal.
+2. Tambahkan `GEMINI_API_KEY` pada Environment Variables project Vercel untuk production.
+3. `GEMINI_MODEL` bersifat opsional; default aplikasi adalah `gemini-3.1-flash-lite`.
+
+Endpoint production tersedia melalui `POST /api/ai/ask`. Untuk mencoba endpoint melalui server SSR
+lokal, jalankan `npm run build` lalu `npm run serve:ssr:y`.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
 
 ## Development server
