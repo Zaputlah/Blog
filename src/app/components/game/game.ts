@@ -83,7 +83,7 @@ export class Game implements OnInit {
     {
       id: 'continue-verse',
       title: 'Sambung Ayat',
-      description: 'Sambungkan ayat dari surah-surah Juz 30.',
+      description: 'Sambungkan ayat dari seluruh Al-Quran.',
       icon: '۞',
     },
     {
@@ -322,8 +322,8 @@ export class Game implements OnInit {
   }
 
   private async loadVerseSources(count: number): Promise<void> {
-    const juzThirtySurahNumbers = Array.from({ length: 37 }, (_, index) => index + 78);
-    const selectedNumbers = this.shuffle(juzThirtySurahNumbers).slice(0, Math.min(count, 10));
+    const allSurahNumbers = Array.from({ length: 114 }, (_, index) => index + 1);
+    const selectedNumbers = this.shuffle(allSurahNumbers).slice(0, Math.min(count, 10));
     const results = await Promise.allSettled(
       selectedNumbers.map((surahNumber) => this.loadVerseSource(surahNumber)),
     );
