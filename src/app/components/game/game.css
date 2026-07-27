@@ -44,6 +44,55 @@
   color: var(--muted);
   line-height: 1.7;
 }
+.mode-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+.mode-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  padding: 0.65rem;
+  color: var(--ink);
+  text-align: left;
+  transition: 0.18s ease;
+}
+.mode-option:hover,
+.mode-option.selected {
+  border-color: var(--green);
+  background: var(--hover);
+}
+.mode-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--chip);
+  color: var(--heading);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.mode-option strong,
+.mode-option small {
+  display: block;
+}
+.mode-option strong {
+  color: var(--heading);
+  font-size: 0.8rem;
+}
+.mode-option small {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.65rem;
+  line-height: 1.35;
+}
 .game-facts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -107,6 +156,14 @@
 .question-content h2 {
   margin: 0.4rem 0 1.8rem;
 }
+.question-content h2.arabic-question {
+  direction: rtl;
+  font-family: "Traditional Arabic", "Noto Naskh Arabic", serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.8;
+  text-align: right;
+}
 .answers {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -141,6 +198,19 @@
   border-radius: 50%;
   background: var(--chip);
   color: var(--heading);
+  font-size: 0.75rem;
+}
+.answer-button.arabic-answer {
+  direction: rtl;
+  justify-content: flex-start;
+  font-family: "Traditional Arabic", "Noto Naskh Arabic", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.8;
+  text-align: right;
+}
+.answer-button.arabic-answer span {
+  font-family: inherit;
   font-size: 0.75rem;
 }
 .answer-button.correct {
@@ -227,6 +297,9 @@
   }
   .intro-content {
     padding: 1.5rem;
+  }
+  .mode-options {
+    grid-template-columns: 1fr;
   }
   .answers {
     grid-template-columns: 1fr;
