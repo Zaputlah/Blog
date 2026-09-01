@@ -9,7 +9,19 @@ import { join } from 'node:path';
 import { loadEnvFile } from 'node:process';
 import { getHaditsCacheExpiry, loadDailyHadits, searchHadits } from './hadits';
 import { getYoutubeCacheExpiry, loadYoutubeVideos } from './youtube';
-import { askZaputlah, normalizeAiContext, normalizeAiQuestion, validateAiQuestion } from './ai';
+import {
+  isArticleSource,
+  loadIslamicArticleDetail,
+  loadIslamicArticles,
+} from './articles';
+import {
+  askZaputlah,
+  normalizeAiContext,
+  normalizeAiQuestion,
+  normalizeTranslationRequest,
+  translateWebsiteTexts,
+  validateAiQuestion,
+} from './ai';
 
 try {
   loadEnvFile();
@@ -23,6 +35,53 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 app.use(express.json({ limit: '16kb' }));
+
+app.get('/api/articles/detail', async (req, res) => {
+  const source = String(req.query['source'] || '');
+  const id = String(req.query['id'] || '');
+  if (!isArticleSource(source) || !/^[A-Za-z0-9+/=_-]{8,1200}$/.test(id)) {
+    res.status(400).json({ code: 'INVALID_ARTICLE' });
+    return;
+  }
+
+  try {
+    const article = await loadIslamicArticleDetail(source, id);
+    res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+    res.json({ data: article });
+  } catch (error) {
+    console.error('Gagal memuat detail artikel:', error instanceof Error ? error.message : '');
+    res.status(502).json({ code: 'ARTICLE_DETAIL_UNAVAILABLE' });
+  }
+});
+
+app.get('/api/article-detail', async (req, res) => {
+  const source = String(req.query['source'] || '');
+  const id = String(req.query['id'] || '');
+  if (!isArticleSource(source) || !/^[A-Za-z0-9+/=_-]{8,1200}$/.test(id)) {
+    res.status(400).json({ code: 'INVALID_ARTICLE' });
+    return;
+  }
+
+  try {
+    const article = await loadIslamicArticleDetail(source, id);
+    res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+    res.json({ data: article });
+  } catch (error) {
+    console.error('Gagal memuat detail artikel:', error instanceof Error ? error.message : '');
+    res.status(502).json({ code: 'ARTICLE_DETAIL_UNAVAILABLE' });
+  }
+});
+
+app.get('/api/articles', async (_req, res) => {
+  try {
+    const articles = await loadIslamicArticles();
+    res.setHeader('Cache-Control', 'public, max-age=1800, stale-while-revalidate=86400');
+    res.json({ data: articles });
+  } catch (error) {
+    console.error('Gagal memuat artikel:', error instanceof Error ? error.message : '');
+    res.status(502).json({ code: 'ARTICLE_API_UNAVAILABLE' });
+  }
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -133,6 +192,26 @@ app.post('/api/ai/ask', async (req, res) => {
     res.status(502).json({
       code: 'AI_SERVICE_ERROR',
       message: 'Tanya Zaputlah belum dapat menjawab. Silakan coba lagi beberapa saat.',
+    });
+  }
+});
+
+app.post('/api/translate', async (req, res) => {
+  const body = req.body as Record<string, unknown> | undefined;
+  const request = normalizeTranslationRequest(body?.['texts'], body?.['language']);
+  if (!request) {
+    res.status(400).json({ code: 'INVALID_TRANSLATION_REQUEST' });
+    return;
+  }
+  try {
+    const translations = await translateWebsiteTexts(request.texts, request.language);
+    res.setHeader('Cache-Control', 'private, max-age=86400');
+    res.json({ translations });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    console.error('Terjemahan website gagal:', message.split(':', 1)[0]);
+    res.status(message === 'GEMINI_API_KEY_MISSING' ? 503 : 502).json({
+      code: message === 'GEMINI_API_KEY_MISSING' ? message : 'TRANSLATION_SERVICE_ERROR',
     });
   }
 });

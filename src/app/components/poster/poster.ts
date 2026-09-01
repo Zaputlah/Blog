@@ -33,6 +33,7 @@ export class PosterComponent implements OnInit {
   categories = ['Semua', 'Poster Kajian', 'Poster Dakwah', 'Konten Instagram'];
   selectedCategory = 'Semua';
   selectedKajianMode: 'Semua' | 'Offline' | 'Online' = 'Semua';
+  selectedKajianSeries = 'Semua Judul';
   kajianSeriesPage = 1;
   readonly kajianSeriesPageSize = 1;
   viewerPosters: Poster[] = [];
@@ -140,6 +141,182 @@ export class PosterComponent implements OnInit {
       title: 'Penutup: Niat yang Benar Saat Beribadah',
       description: 'Menyerahkan hasil kepada Allah dan menjaga ibadah agar tidak bergantung pada pencapaian duniawi.',
     },
+    {
+      fileName: 'sabar-pare-01-belajar-arti-sabar-dari-seporsi-pare.jpg',
+      title: 'Belajar Arti Sabar dari Seporsi Pare',
+      description: 'Belajar menerima pahitnya ujian dengan sabar dan keyakinan akan kebersamaan Allah.',
+    },
+    {
+      fileName: 'sabar-pare-02-analogi-pare-pahit-namun-dinikmati.jpg',
+      title: 'Analogi Pare: Pahit Namun Tetap Dinikmati',
+      description: 'Seperti pare, sabar memang pahit dan berat tetapi dapat dijalani dengan benar.',
+    },
+    {
+      fileName: 'sabar-pare-03-inti-pesan-sabar-itu-berat.jpg',
+      title: 'Inti Pesan: Sabar Itu Memang Berat',
+      description: 'Mengakui beratnya sabar sebagai langkah awal untuk menjalaninya dengan jujur.',
+    },
+    {
+      fileName: 'sabar-pare-04-kekuatan-kesabaran-bersama-allah.jpg',
+      title: 'Kekuatan di Balik Kesabaran: Bersama Allah',
+      description: 'Kebersamaan Allah menghadirkan penjagaan, perlindungan, dan ketenangan.',
+    },
+    {
+      fileName: 'sabar-pare-05-kesimpulan.jpg',
+      title: 'Kesimpulan: Menikmati Proses Kesabaran',
+      description: 'Menerima pahitnya ujian dengan iman membawa ketenangan hati.',
+    },
+    {
+      fileName: 'jalan-keluar-01-memahami-jalan-keluar-dan-rezeki.jpg',
+      title: 'Memahami Jalan Keluar dan Rezeki',
+      description: 'Ketenangan hadir ketika hati ridha kepada ketetapan Allah.',
+    },
+    {
+      fileName: 'jalan-keluar-02-jalan-keluar-yang-hakiki.jpg',
+      title: 'Jalan Keluar yang Hakiki',
+      description: 'Jalan keluar dimulai dari hati yang memahami dan meyakini ketetapan Allah.',
+    },
+    {
+      fileName: 'jalan-keluar-03-tidak-selalu-lahir.jpg',
+      title: 'Jalan Keluar Tidak Selalu Lahir',
+      description: 'Allah dapat memberi jalan keluar melalui pemahaman dan ketenangan batin.',
+    },
+    {
+      fileName: 'jalan-keluar-04-peran-ridha-dalam-penyelesaian-masalah.jpg',
+      title: 'Peran Ridha dalam Penyelesaian Masalah',
+      description: 'Ridha membuat hati tetap tenang meskipun masalah belum selesai secara lahir.',
+    },
+    {
+      fileName: 'jalan-keluar-05-kesimpulan.jpg',
+      title: 'Kesimpulan: Tawakal dan Ridha',
+      description: 'Tawakal dan ridha menenangkan jiwa dalam menerima takdir Allah.',
+    },
+    {
+      fileName: 'ilmu-kesabaran-01-sampul.jpg',
+      title: 'Ilmu Kesabaran: Mengelola Nafsu dan Memperkuat Intelektualitas',
+      description: 'Sampul rangkuman kajian tentang ilmu dan keterampilan menjalani kesabaran.',
+    },
+    {
+      fileName: 'ilmu-kesabaran-02-urgensi-kesabaran.jpg',
+      title: 'Urgensi Kesabaran',
+      description: 'Kesabaran adalah kunci menikmati hidup dan menghadapi ujian dunia.',
+    },
+    {
+      fileName: 'ilmu-kesabaran-03-dua-cara-allah-menguatkan-kesabaran.jpg',
+      title: 'Dua Cara Allah Menguatkan Kesabaran',
+      description: 'Memperkuat sisi intelektual dan kemauan untuk menahan hawa nafsu.',
+    },
+    {
+      fileName: 'ilmu-kesabaran-04-contoh-penerapan-kesabaran.jpg',
+      title: 'Contoh Penerapan Kesabaran',
+      description: 'Penerapan sabar ketika diuji, kehilangan harta, dan mendidik anak.',
+    },
+    {
+      fileName: 'ilmu-kesabaran-05-takdir-syukur-dan-penutup.jpg',
+      title: 'Takdir, Syukur, dan Penutup',
+      description: 'Menerima takdir, mensyukuri nikmat, dan menerapkan sabar dalam kehidupan.',
+    },
+    {
+      fileName: 'hawa-nafsu-01-strategi-bijak-menaklukkan-hawa-nafsu.jpg',
+      title: 'Strategi Bijak Menaklukkan Hawa Nafsu',
+      description: 'Ketenangan diraih dengan menutup pintu yang menguatkan hawa nafsu.',
+    },
+    {
+      fileName: 'hawa-nafsu-02-melemahkan-bukan-melawan.jpg',
+      title: 'Melemahkan, Bukan Melawan',
+      description: 'Melemahkan hawa nafsu sejak dini sebelum tumbuh semakin kuat.',
+    },
+    {
+      fileName: 'hawa-nafsu-03-cara-praktis-menutup-akses.jpg',
+      title: 'Cara Praktis Menutup Akses',
+      description: 'Puasa dan menjaga pandangan menjadi benteng awal dari hawa nafsu.',
+    },
+    {
+      fileName: 'hawa-nafsu-04-jaga-telinga-hindari-fomo.jpg',
+      title: 'Jaga Telinga, Hindari FOMO',
+      description: 'Menjaga pendengaran dan menyaring paparan yang masuk ke dalam hati.',
+    },
+    {
+      fileName: 'hawa-nafsu-05-kesimpulan.jpg',
+      title: 'Kesimpulan: Menutup Akses Hawa Nafsu',
+      description: 'Ketegasan menutup akses adalah langkah bijak menaklukkan hawa nafsu.',
+    },
+    {
+      fileName: 'perusak-kesabaran-01-sampul.jpg',
+      title: 'Hal-Hal yang Merusak Kesabaran',
+      description: 'Sampul rangkuman kajian mengenai sikap yang dapat merusak kesabaran.',
+    },
+    {
+      fileName: 'perusak-kesabaran-02-mengeluh-kepada-makhluk.jpg',
+      title: 'Mengeluh kepada Makhluk',
+      description: 'Berkeluh kesah tentang takdir dapat merusak kesabaran jika tidak pada tempatnya.',
+    },
+    {
+      fileName: 'perusak-kesabaran-03-ekspresi-kesedihan-tidak-terkontrol.jpg',
+      title: 'Ekspresi Kesedihan yang Tidak Terkontrol',
+      description: 'Membedakan kesedihan yang manusiawi dari ekspresi yang merusak kesabaran.',
+    },
+    {
+      fileName: 'perusak-kesabaran-04-terlalu-sering-menceritakan-musibah.jpg',
+      title: 'Terlalu Sering Menceritakan Musibah',
+      description: 'Menjaga kehormatan diri dengan tidak mengumbar musibah untuk mencari simpati.',
+    },
+    {
+      fileName: 'perusak-kesabaran-05-sifat-halu-tidak-sabar-dan-pelit.jpg',
+      title: "Sifat Halu': Tidak Sabar dan Pelit",
+      description: 'Sifat berkeluh kesah dan pelit menjadi indikator kurangnya latihan kesabaran.',
+    },
+  ];
+  private kajianSeriesMetadata: {
+    title: string;
+    speaker: string;
+    attendanceMode: 'Offline' | 'Online';
+  }[] = [
+    {
+      title: 'Bab Kesabaran',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Offline',
+    },
+    {
+      title: 'Kisah Nabi Luth dan Kaum Sodom',
+      speaker: 'Ustadz Khalid Basalamah',
+      attendanceMode: 'Offline',
+    },
+    {
+      title: 'Bab Harap: Syahadat, Tauhid, dan Buah Amal Saleh',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Online',
+    },
+    {
+      title: 'Menyikapi Kegagalan dan Rasa Kecewa kepada Allah',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Online',
+    },
+    {
+      title: 'Belajar Arti Sabar dari Seporsi Pare',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Online',
+    },
+    {
+      title: 'Memahami Jalan Keluar dan Rezeki',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Online',
+    },
+    {
+      title: 'Ilmu Kesabaran: Mengelola Nafsu dan Memperkuat Intelektualitas',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Offline',
+    },
+    {
+      title: 'Strategi Bijak Menaklukkan Hawa Nafsu',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Online',
+    },
+    {
+      title: 'Hal-Hal yang Merusak Kesabaran',
+      speaker: 'Ustadz Muhammad Nuzul Dzikri',
+      attendanceMode: 'Offline',
+    },
   ];
   private mainPosterFiles = ['poster1.png'];
   private instagramPosterFiles = Array.from({ length: 30 }, (_, index) => `poster${index + 1}.jpg`);
@@ -167,6 +344,11 @@ export class PosterComponent implements OnInit {
 
   filterKajianMode(mode: 'Semua' | 'Offline' | 'Online') {
     this.selectedKajianMode = mode;
+    this.kajianSeriesPage = 1;
+  }
+
+  filterKajianSeries(series: string) {
+    this.selectedKajianSeries = series;
     this.kajianSeriesPage = 1;
   }
 
@@ -204,6 +386,12 @@ export class PosterComponent implements OnInit {
     this.getFilteredPosters().forEach((poster) => {
       if (!poster.series) return;
       if (
+        this.selectedKajianSeries !== 'Semua Judul' &&
+        poster.series !== this.selectedKajianSeries
+      ) {
+        return;
+      }
+      if (
         this.selectedKajianMode !== 'Semua' &&
         poster.attendanceMode !== this.selectedKajianMode
       ) {
@@ -222,6 +410,14 @@ export class PosterComponent implements OnInit {
         (first.sequence || 0) - (second.sequence || 0)
       ),
     }));
+  }
+
+  get kajianSeriesOptions(): string[] {
+    const series = this.allPosters
+      .filter((poster) => poster.category === 'Poster Kajian' && poster.series)
+      .map((poster) => poster.series as string);
+
+    return ['Semua Judul', ...Array.from(new Set(series))];
   }
 
   get paginatedKajianPosterSeries() {
@@ -285,6 +481,7 @@ export class PosterComponent implements OnInit {
           poster.title.toLowerCase().includes(this.searchTerm) ||
           poster.description.toLowerCase().includes(this.searchTerm) ||
           poster.category.toLowerCase().includes(this.searchTerm) ||
+          poster.series?.toLowerCase().includes(this.searchTerm) ||
           poster.typeLabel.toLowerCase().includes(this.searchTerm)
       );
     }
@@ -312,30 +509,24 @@ export class PosterComponent implements OnInit {
   }
 
   private buildKajianPosters(): Poster[] {
-    return this.kajianPosters.map((poster, index) => ({
-      id: index + 1,
-      title: poster.title,
-      category: 'Poster Kajian',
-      imageUrl: `/posters-kajian/${poster.fileName}`,
-      description: poster.description,
-      format: this.getFormat(poster.fileName),
-      typeLabel: 'Info Kajian',
-      series:
-        index < 5
-          ? 'Bab Kesabaran'
-          : index < 10
-            ? 'Kisah Nabi Luth dan Kaum Sodom'
-            : index < 15
-              ? 'Bab Harap: Syahadat, Tauhid, dan Buah Amal Saleh'
-              : 'Menyikapi Kegagalan dan Rasa Kecewa kepada Allah',
-      speaker:
-        index < 5 || index >= 10
-          ? 'Ustadz Muhammad Nuzul Dzikri'
-          : 'Ustadz Khalid Basalamah',
-      sequence: (index % 5) + 1,
-      seriesTotal: 5,
-      attendanceMode: index < 10 ? 'Offline' : 'Online',
-    }));
+    return this.kajianPosters.map((poster, index) => {
+      const series = this.kajianSeriesMetadata[Math.floor(index / 5)];
+
+      return {
+        id: index + 1,
+        title: poster.title,
+        category: 'Poster Kajian',
+        imageUrl: `/posters-kajian/${poster.fileName}`,
+        description: poster.description,
+        format: this.getFormat(poster.fileName),
+        typeLabel: 'Info Kajian',
+        series: series.title,
+        speaker: series.speaker,
+        sequence: (index % 5) + 1,
+        seriesTotal: 5,
+        attendanceMode: series.attendanceMode,
+      };
+    });
   }
 
   private buildMainPosters(): Poster[] {

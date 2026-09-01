@@ -1,0 +1,95 @@
+:host .article-loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-inline-end: 0.6rem;
+  border: 2px solid color-mix(in srgb, var(--green) 25%, transparent);
+  border-top-color: var(--green);
+  border-radius: 999px;
+  vertical-align: -0.15rem;
+  animation: article-spin 700ms linear infinite;
+}
+
+@keyframes article-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host ::ng-deep .article-body {
+  color: var(--body, #34433f);
+  font-size: 1rem;
+  line-height: 2;
+}
+
+:host ::ng-deep .article-body p,
+:host ::ng-deep .article-body ul,
+:host ::ng-deep .article-body ol,
+:host ::ng-deep .article-body blockquote {
+  margin: 0 0 1.15rem;
+}
+
+:host ::ng-deep .article-body h2,
+:host ::ng-deep .article-body h3,
+:host ::ng-deep .article-body h4 {
+  margin: 1.75rem 0 0.75rem;
+  color: var(--heading);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+:host ::ng-deep .article-body h2 {
+  font-size: 1.5rem;
+}
+
+:host ::ng-deep .article-body h3 {
+  font-size: 1.25rem;
+}
+
+:host ::ng-deep .article-body ul,
+:host ::ng-deep .article-body ol {
+  padding-inline-start: 1.5rem;
+}
+
+:host ::ng-deep .article-body ul {
+  list-style: disc;
+}
+
+:host ::ng-deep .article-body ol {
+  list-style: decimal;
+}
+
+:host ::ng-deep .article-body a {
+  color: var(--green);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+:host ::ng-deep .article-body [id] {
+  scroll-margin-top: 7rem;
+}
+
+:host ::ng-deep .article-body .ez-toc-title-toggle {
+  display: none;
+}
+
+:host ::ng-deep .article-body blockquote {
+  border-inline-start: 4px solid var(--green);
+  background: var(--chip);
+  padding: 1rem 1.25rem;
+}
+
+:host ::ng-deep .article-body img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.25rem auto;
+  border-radius: 0.75rem;
+}
+
+:host ::ng-deep .article-body iframe,
+:host ::ng-deep .article-body script,
+:host ::ng-deep .article-body style,
+:host ::ng-deep .article-body form {
+  display: none !important;
+}

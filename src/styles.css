@@ -42,6 +42,124 @@ html {
   scroll-behavior: smooth;
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1000;
+  transform: translateY(-160%);
+  border: 3px solid var(--panel);
+  border-radius: 0.5rem;
+  background: var(--heading);
+  padding: 0.75rem 1rem;
+  color: var(--panel);
+  font-weight: 800;
+  box-shadow: 0 0 0 3px var(--green);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--gold) !important;
+  outline-offset: 3px;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+:root.a11y-high-contrast {
+  --ink: #000000;
+  --heading: #000000;
+  --muted: #222222;
+  --paper: #ffffff;
+  --panel: #ffffff;
+  --field: #ffffff;
+  --soft: #ffffff;
+  --chip: #fff5bf;
+  --hover: #fff1a8;
+  --line: #000000;
+  --green: #005a46;
+  --green-dark: #003d30;
+  --gold: #8a5700;
+}
+
+:root.dark.a11y-high-contrast {
+  --ink: #ffffff;
+  --heading: #ffffff;
+  --muted: #eeeeee;
+  --paper: #000000;
+  --panel: #000000;
+  --field: #000000;
+  --soft: #090909;
+  --chip: #142f28;
+  --hover: #203b34;
+  --line: #ffffff;
+  --green: #7fffd4;
+  --green-dark: #b6ffe7;
+  --gold: #ffd66b;
+}
+
+:root.a11y-reduced-motion,
+:root.a11y-reduced-motion *,
+:root.a11y-reduced-motion *::before,
+:root.a11y-reduced-motion *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+:root.a11y-large-text .desktop-navigation {
+  display: none !important;
+}
+
+:root.a11y-large-text .mobile-menu-button {
+  display: inline-flex !important;
+}
+
+:root.a11y-large-text .mobile-menu-panel {
+  display: grid !important;
+}
+
+:root.a11y-large-text .logo-wrapper {
+  width: 72px !important;
+  height: 48px !important;
+}
+
+:root.a11y-large-text header .theme-toggle,
+:root.a11y-large-text header .mobile-menu-button,
+:root.a11y-large-text header app-accessibility-menu summary {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+}
+
+:root.a11y-large-text header .language-picker summary {
+  width: 64px !important;
+  min-width: 64px !important;
+  height: 40px !important;
+}
+
+:root.a11y-large-text header .current-language-name,
+:root.a11y-large-text header .language-icon {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   margin: 0;
   background: var(--paper);

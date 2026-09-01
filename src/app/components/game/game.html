@@ -22,6 +22,7 @@
             *ngFor="let mode of gameModes"
             type="button"
             class="mode-option"
+            [disabled]="loadingGame"
             [class.selected]="selectedMode === mode.id"
             [attr.aria-pressed]="selectedMode === mode.id"
             (click)="selectMode(mode.id)"
@@ -48,6 +49,7 @@
         >
           {{ loadingGame ? 'Menyiapkan soal...' : 'Mulai ' + selectedModeTitle }}
         </button>
+        <p *ngIf="gameError" class="game-error" role="alert">{{ gameError }}</p>
       </div>
     </section>
 
@@ -117,7 +119,14 @@
         <button type="button" class="primary-button" [disabled]="loadingGame" (click)="startGame()">
           {{ loadingGame ? 'Menyiapkan...' : 'Main Lagi' }}
         </button>
-        <button type="button" class="secondary-button" (click)="backToIntro()">Kembali</button>
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="loadingGame"
+          (click)="backToIntro()"
+        >
+          Kembali
+        </button>
       </div>
     </section>
   </div>

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AppLanguage, LanguageService } from '../../i18n/language.service';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./header.css'],
 })
 export class Header implements OnInit {
+  readonly language = inject(LanguageService);
   isMobileMenuOpen = false;
   theme: 'light' | 'dark' = 'light';
 
@@ -33,6 +35,10 @@ export class Header implements OnInit {
     if (this.isBrowser()) {
       localStorage.setItem('zaputlah.theme', this.theme);
     }
+  }
+
+  selectLanguage(language: AppLanguage): void {
+    this.language.setLanguage(language);
   }
 
   get isDarkMode(): boolean {

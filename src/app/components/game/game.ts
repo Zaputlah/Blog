@@ -103,6 +103,7 @@ export class Game implements OnInit {
   answered = false;
   selectedMode: GameMode = 'mixed';
   loadingGame = false;
+  gameError = '';
 
   ngOnInit(): void {
     if (typeof localStorage !== 'undefined') {
@@ -119,30 +120,38 @@ export class Game implements OnInit {
     if (this.loadingGame) return;
 
     this.loadingGame = true;
-    const selectedSurahs = this.shuffle([...this.allSurahs]).slice(0, this.questionCount);
-    const questionTypes = this.createQuestionTypes();
-    const needsVerseData = questionTypes.includes('continue-verse');
-    const verseQuestionCount = questionTypes.filter((type) => type === 'continue-verse').length;
+    this.gameError = '';
 
-    if (needsVerseData) {
-      await this.loadVerseSources(verseQuestionCount);
+    try {
+      const selectedSurahs = this.shuffle([...this.allSurahs]).slice(0, this.questionCount);
+      const questionTypes = this.createQuestionTypes();
+      const needsVerseData = questionTypes.includes('continue-verse');
+      const verseQuestionCount = questionTypes.filter((type) => type === 'continue-verse').length;
+
+      if (needsVerseData) {
+        await this.loadVerseSources(verseQuestionCount);
+      }
+
+      const versePairs = this.createVersePairs(verseQuestionCount);
+
+      this.questions = selectedSurahs.map((surah, index) => {
+        const type = questionTypes[index];
+        const versePair = type === 'continue-verse' ? versePairs.pop() : undefined;
+        return this.createQuestion(surah, type, versePair);
+      });
+
+      this.currentIndex = 0;
+      this.score = 0;
+      this.selectedAnswer = '';
+      this.answered = false;
+      this.view = 'playing';
+      this.scrollToGame();
+    } catch (error) {
+      console.error('Gagal menyiapkan kuis:', error);
+      this.gameError = 'Soal belum berhasil dimuat. Periksa koneksi lalu coba lagi.';
+    } finally {
+      this.loadingGame = false;
     }
-
-    const versePairs = this.createVersePairs(verseQuestionCount);
-
-    this.questions = selectedSurahs.map((surah, index) => {
-      const type = questionTypes[index];
-      const versePair = type === 'continue-verse' ? versePairs.pop() : undefined;
-      return this.createQuestion(surah, type, versePair);
-    });
-
-    this.currentIndex = 0;
-    this.score = 0;
-    this.selectedAnswer = '';
-    this.answered = false;
-    this.view = 'playing';
-    this.loadingGame = false;
-    this.scrollToGame();
   }
 
   selectAnswer(answer: string): void {
@@ -338,17 +347,26 @@ export class Game implements OnInit {
     const cachedSource = this.verseSourceCache.get(surahNumber);
     if (cachedSource) return cachedSource;
 
-    const response = await fetch(`https://equran.id/api/v2/surat/${surahNumber}`);
-    if (!response.ok) {
-      throw new Error(`Gagal memuat surah ${surahNumber}`);
-    }
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const payload = (await response.json()) as {
-      data: SurahQuizItem & { ayat: VerseItem[] };
-    };
-    const source = { surah: payload.data, verses: payload.data.ayat };
-    this.verseSourceCache.set(surahNumber, source);
-    return source;
+    try {
+      const response = await fetch(`https://equran.id/api/v2/surat/${surahNumber}`, {
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new Error(`Gagal memuat surah ${surahNumber}`);
+      }
+
+      const payload = (await response.json()) as {
+        data: SurahQuizItem & { ayat: VerseItem[] };
+      };
+      const source = { surah: payload.data, verses: payload.data.ayat };
+      this.verseSourceCache.set(surahNumber, source);
+      return source;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   private async loadFallbackVerseSources(): Promise<VerseSource[]> {

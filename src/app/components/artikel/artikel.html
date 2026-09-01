@@ -2,10 +2,9 @@
   <div class="page-container">
     <section class="page-intro">
       <p class="eyebrow">Artikel</p>
-      <h1>Artikel Zulhijah</h1>
+      <h1>Artikel Islam</h1>
       <p>
-        Kumpulan tulisan seputar sepuluh hari pertama Zulhijah, Puasa Arafah, Idul Adha, kurban,
-        Hari Tasyrik, dan dzikir. Tanggal mengikuti Zulhijah 1447 H/2026 M.
+        Temukan artikel Islam terbaru dari berbagai situs tepercaya dalam satu tempat.
       </p>
     </section>
 
@@ -14,7 +13,7 @@
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <input
             type="text"
-            placeholder="Cari artikel Zulhijah..."
+            placeholder="Cari judul, penulis, atau sumber..."
             class="input-field md:max-w-sm"
             (input)="onSearchChange($event)"
           />
@@ -29,10 +28,15 @@
           </div>
         </div>
 
-        <p class="mt-4 text-sm leading-6 text-[#5f6f6a]">
-          Catatan: penanggalan Hijriah dapat mengikuti ketetapan resmi pemerintah atau lembaga
-          setempat.
+        <p *ngIf="loading" class="mt-4 text-sm font-semibold text-[#1f6f5b]">
+          Memuat artikel terbaru...
         </p>
+        <p *ngIf="loadError" class="mt-4 text-sm leading-6 text-[#8a5a24]">{{ loadError }}</p>
+        <div class="mt-4 rounded-lg border border-[#cfe0da] bg-white/70 px-4 py-3 text-sm leading-6 text-[#34433f]">
+          <strong class="text-[#123d34]">Cara membaca:</strong>
+          klik tombol <strong>Baca Artikel</strong> untuk menyiapkan isi, tunggu prosesnya selesai,
+          lalu klik tombol tersebut sekali lagi jika artikel belum tampil.
+        </div>
       </div>
     </section>
 
@@ -53,20 +57,30 @@
                 <span>{{ featuredArticle.gregorianDate }}</span>
                 <span>{{ featuredArticle.readTime }}</span>
                 <span>{{ getClickCount(featuredArticle.id) }} klik</span>
-                <span>{{ featuredArticle.sources.length }} dalil</span>
+                <span>{{ featuredArticle.sources.length }} sumber</span>
               </div>
-              <button class="primary-button self-start sm:self-auto" (click)="openArticle(featuredArticle)">
-                Baca Selengkapnya
+              <button
+                class="primary-button self-start sm:self-auto"
+                (mouseenter)="prefetchArticle(featuredArticle)"
+                (focus)="prefetchArticle(featuredArticle)"
+                (click)="openArticle(featuredArticle)"
+              >
+                {{ isArticleLoading(featuredArticle.id) ? 'Menyiapkan Artikel...' : 'Baca Selengkapnya (klik 2x)' }}
               </button>
             </div>
           </div>
 
           <div class="quiet-block flex items-center p-6 md:p-8">
             <div>
-              <p class="eyebrow">Zulhijah 1447 H</p>
-              <p class="mt-3 text-2xl font-extrabold leading-snug text-[#123d34]">
-                18 Mei sampai 30 Mei 2026 memuat hari-hari utama untuk amal, Arafah, Idul Adha,
-                dan Tasyrik.
+              <p class="eyebrow">{{ featuredArticle.category }}</p>
+              <img
+                *ngIf="featuredArticle.thumbnail"
+                [src]="featuredArticle.thumbnail"
+                [alt]="featuredArticle.title"
+                class="mb-4 aspect-video w-full rounded-lg object-cover"
+              />
+              <p class="mt-3 text-xl font-extrabold leading-snug text-[#123d34]">
+                {{ featuredArticle.author || 'Artikel pilihan untuk menambah ilmu dan wawasan Islam.' }}
               </p>
             </div>
           </div>
@@ -93,7 +107,34 @@
           <button class="secondary-button self-start" (click)="closeArticle()">Tutup</button>
         </div>
 
-        <div class="mt-7 space-y-5">
+        <div *ngIf="detailLoading" class="mt-7 quiet-block rounded-lg p-5 text-sm font-semibold text-[#1f6f5b]">
+          <span class="article-loading-spinner" aria-hidden="true"></span>
+          <span>
+            Klik pertama sedang menyiapkan isi dari {{ selectedArticle.category }}. Tunggu prosesnya
+            selesai, lalu klik <strong>Baca Artikel</strong> sekali lagi jika isi belum muncul.
+          </span>
+        </div>
+
+        <div *ngIf="detailError" class="mt-7 rounded-lg border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+          {{ detailError }}
+        </div>
+
+        <img
+          *ngIf="selectedArticle.thumbnail"
+          [src]="selectedArticle.thumbnail"
+          [alt]="selectedArticle.title"
+          class="mt-7 max-h-[28rem] w-full rounded-xl object-cover"
+        />
+
+        <div
+          *ngIf="!detailLoading && selectedArticle.contentHtml"
+          class="article-body mt-7"
+          [attr.data-article-id]="selectedArticle.id"
+          [innerHTML]="selectedArticle.contentHtml"
+          (click)="handleArticleContentClick($event)"
+        ></div>
+
+        <div *ngIf="!selectedArticle.contentHtml" class="mt-7 space-y-5">
           <p
             *ngFor="let paragraph of selectedArticle.content"
             class="text-base leading-8 text-[#34433f]"
@@ -103,19 +144,16 @@
         </div>
 
         <div class="mt-8 border-t border-[#dfe8e3] pt-6">
-          <h3 class="text-lg font-extrabold text-[#123d34]">Rujukan Dalil dan Ulama</h3>
+          <h3 class="text-lg font-extrabold text-[#123d34]">Sumber Artikel</h3>
           <p class="mt-2 text-sm leading-6 text-[#5f6f6a]">
-            Rujukan diarahkan ke tafsir dan fatwa ulama, terutama sumber Saudi seperti Tafsir KSU,
-            Syaikh Bin Baz, dan Syaikh Ibnu Utsaimin.
+            Hak cipta dan isi artikel tetap menjadi milik situs penerbit. Gunakan tautan berikut untuk
+            membaca dan memeriksa sumber aslinya.
           </p>
 
           <div class="mt-4 grid gap-4 md:grid-cols-2">
-            <a
+            <div
               *ngFor="let source of selectedArticle.sources"
-              [href]="source.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-lg border border-[#dfe8e3] bg-white p-4 transition hover:border-[#1f6f5b]/40 hover:bg-[#fbfcfb]"
+              class="rounded-lg border border-[#dfe8e3] bg-white p-4"
             >
               <div class="flex flex-wrap items-center gap-2">
                 <span class="badge">{{ source.type }}</span>
@@ -124,7 +162,15 @@
               <p class="mt-3 text-sm leading-6 text-[#5f6f6a]">
                 {{ source.note }}
               </p>
-            </a>
+              <a
+                [href]="source.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-4 inline-flex text-sm font-extrabold text-[#1f6f5b] hover:underline"
+              >
+                Lihat sumber asli ↗
+              </a>
+            </div>
           </div>
         </div>
       </article>
@@ -159,10 +205,15 @@
               <div class="flex flex-wrap gap-3 meta-text">
                 <span>{{ article.readTime }}</span>
                 <span>{{ getClickCount(article.id) }} klik</span>
-                <span>{{ article.sources.length }} dalil</span>
+                <span>{{ article.sources.length }} sumber</span>
               </div>
-              <button class="text-sm font-extrabold text-[#1f6f5b]" (click)="openArticle(article)">
-                Baca Artikel
+              <button
+                class="text-sm font-extrabold text-[#1f6f5b]"
+                (mouseenter)="prefetchArticle(article)"
+                (focus)="prefetchArticle(article)"
+                (click)="openArticle(article)"
+              >
+                {{ isArticleLoading(article.id) ? 'Menyiapkan...' : 'Baca Artikel (klik 2x)' }}
               </button>
             </div>
           </div>

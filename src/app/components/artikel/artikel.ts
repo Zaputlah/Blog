@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { firstValueFrom, timeout } from 'rxjs';
 
 interface Article {
   id: string;
@@ -11,6 +13,12 @@ interface Article {
   excerpt: string;
   content: string[];
   sources: ArticleSource[];
+  author?: string;
+  sourceCode?: string;
+  external?: boolean;
+  originalUrl?: string;
+  thumbnail?: string;
+  contentHtml?: string;
 }
 
 interface ArticleSource {
@@ -20,9 +28,25 @@ interface ArticleSource {
   url: string;
 }
 
+interface ApiArticleSummary {
+  id: string;
+  title: string;
+  date: string;
+  author: string;
+  url: string;
+  source: string;
+  sourceCode: string;
+  categories: string[];
+}
+
+interface ApiArticleDetail extends ApiArticleSummary {
+  thumbnail: string;
+  contentHtml: string;
+}
+
 @Component({
   selector: 'app-artikel',
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './artikel.html',
   styleUrl: './artikel.css',
 })
@@ -33,6 +57,18 @@ export class Artikel implements OnInit {
   selectedCategory = 'Semua';
   selectedArticle: Article | null = null;
   articleClicks: Record<string, number> = {};
+  loading = false;
+  detailLoading = false;
+  loadError = '';
+  detailError = '';
+  private readonly detailCache = new Map<string, Article>();
+  private readonly detailPromises = new Map<string, Promise<Article>>();
+  private activeDetailRequest = 0;
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
 
   articles: Article[] = [
     {
@@ -249,6 +285,7 @@ export class Artikel implements OnInit {
 
   ngOnInit() {
     this.loadClickCounts();
+    if (this.isBrowser()) this.loadApiArticles();
   }
 
   onSearchChange(event: Event) {
@@ -265,26 +302,214 @@ export class Artikel implements OnInit {
   }
 
   openArticle(article: Article) {
+    if (this.detailLoading && this.selectedArticle?.id === article.id) {
+      this.scrollToArticle();
+      return;
+    }
+
+    const requestNumber = ++this.activeDetailRequest;
     this.articleClicks[article.id] = this.getClickCount(article.id) + 1;
     this.saveClickCounts();
-    this.selectedArticle = article;
+    this.selectedArticle = { ...article, contentHtml: undefined, thumbnail: undefined };
+    this.detailLoading = false;
+    this.detailError = '';
 
-    if (this.isBrowser()) {
-      setTimeout(() => {
-        document.getElementById('artikel-detail')?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      });
+    if (article.external && article.sourceCode) {
+      const cached = this.detailCache.get(article.id);
+      if (cached) {
+        this.selectedArticle = cached;
+      } else {
+        void this.loadArticleDetail(article, requestNumber);
+      }
     }
+
+    this.scrollToArticle();
   }
 
   closeArticle() {
+    this.activeDetailRequest += 1;
     this.selectedArticle = null;
+    this.detailLoading = false;
+    this.detailError = '';
   }
 
   getClickCount(articleId: string): number {
     return this.articleClicks[articleId] || 0;
+  }
+
+  private loadApiArticles() {
+    this.loading = true;
+    this.loadError = '';
+    this.http.get<{ data: ApiArticleSummary[] }>('/api/articles').subscribe({
+      next: (response) => {
+        const articles = (response.data || []).map((article) => this.mapApiArticle(article));
+        if (articles.length) {
+          this.articles = articles;
+          setTimeout(() => void this.prefetchInitialArticles(articles), 400);
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loading = false;
+        this.loadError = 'Artikel terbaru belum dapat dimuat. Menampilkan artikel pilihan Zaputlah.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private async loadArticleDetail(article: Article, requestNumber: number) {
+    this.detailLoading = true;
+    try {
+      const detail = await this.getArticleDetail(article);
+      if (requestNumber !== this.activeDetailRequest || this.selectedArticle?.id !== article.id) return;
+      this.selectedArticle = detail;
+      this.detailLoading = false;
+      this.cdr.detectChanges();
+    } catch {
+      if (requestNumber !== this.activeDetailRequest || this.selectedArticle?.id !== article.id) return;
+      this.detailLoading = false;
+      this.detailError = 'Isi artikel belum dapat dimuat. Anda tetap dapat membaca dari sumber aslinya.';
+      this.cdr.detectChanges();
+    }
+  }
+
+  prefetchArticle(article: Article) {
+    if (!article.external || !article.sourceCode || this.detailCache.has(article.id)) return;
+    void this.getArticleDetail(article).catch(() => undefined);
+  }
+
+  isArticleLoading(articleId: string): boolean {
+    return this.detailLoading && this.selectedArticle?.id === articleId;
+  }
+
+  handleArticleContentClick(event: MouseEvent) {
+    const clickedElement = event.target;
+    if (!(clickedElement instanceof Element)) return;
+
+    const link = clickedElement.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href')?.trim() || '';
+    const hashIndex = href.indexOf('#');
+    const isInternalHeadingLink =
+      href.startsWith('#') || href.startsWith('/#') || href.startsWith('./#');
+    if (!isInternalHeadingLink || hashIndex < 0) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const rawTarget = href.slice(hashIndex + 1);
+    if (!rawTarget) return;
+
+    let targetId = rawTarget;
+    try {
+      targetId = decodeURIComponent(rawTarget);
+    } catch {
+      // Gunakan nilai asli jika fragmen dari situs sumber bukan URI yang valid.
+    }
+
+    const articleBody = link.closest('.article-body');
+    const escapedTarget = CSS.escape(targetId);
+    const target = articleBody?.querySelector<HTMLElement>(
+      `#${escapedTarget}, [name="${escapedTarget}"]`,
+    );
+
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  private async prefetchInitialArticles(articles: Article[]) {
+    const initialArticles = articles.slice(0, 12);
+    for (let index = 0; index < initialArticles.length; index += 3) {
+      await Promise.allSettled(
+        initialArticles.slice(index, index + 3).map((article) => this.getArticleDetail(article)),
+      );
+    }
+  }
+
+  private scrollToArticle() {
+    if (!this.isBrowser()) return;
+    this.cdr.detectChanges();
+    requestAnimationFrame(() => {
+      document.getElementById('artikel-detail')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  }
+
+  private getArticleDetail(article: Article): Promise<Article> {
+    const cached = this.detailCache.get(article.id);
+    if (cached) return Promise.resolve(cached);
+
+    const pending = this.detailPromises.get(article.id);
+    if (pending) return pending;
+
+    const request = firstValueFrom(
+      this.http
+        .get<{ data: ApiArticleDetail }>('/api/article-detail', {
+          params: { source: article.sourceCode!, id: article.id },
+        })
+        .pipe(timeout(20_000)),
+    )
+      .then(({ data: detail }) => {
+        const enrichedDetail: ApiArticleDetail = {
+          ...detail,
+          author: detail.author || article.author || '',
+          date: detail.date || article.gregorianDate,
+          url: detail.url || article.originalUrl || '',
+          source: detail.source || article.category,
+        };
+        const result: Article = {
+          ...article,
+          author: enrichedDetail.author,
+          gregorianDate: enrichedDetail.date,
+          thumbnail: enrichedDetail.thumbnail,
+          contentHtml: enrichedDetail.contentHtml,
+          readTime: this.estimateReadTime(enrichedDetail.contentHtml),
+          originalUrl: enrichedDetail.url,
+          sources: [this.createApiSource(enrichedDetail)],
+        };
+        this.detailCache.set(article.id, result);
+        return result;
+      })
+      .finally(() => this.detailPromises.delete(article.id));
+
+    this.detailPromises.set(article.id, request);
+    return request;
+  }
+
+  private mapApiArticle(article: ApiArticleSummary): Article {
+    const authorText = article.author ? ` oleh ${article.author}` : '';
+    return {
+      id: article.id,
+      title: article.title,
+      category: article.source,
+      hijriDate: article.categories[0] || 'Artikel Islam',
+      gregorianDate: article.date || 'Tanggal tidak tersedia',
+      readTime: 'Artikel lengkap',
+      excerpt: `Artikel dari ${article.source}${authorText}.`,
+      content: [],
+      sources: [this.createApiSource(article)],
+      author: article.author,
+      sourceCode: article.sourceCode,
+      external: true,
+      originalUrl: article.url,
+    };
+  }
+
+  private createApiSource(article: ApiArticleSummary): ArticleSource {
+    return {
+      type: 'Sumber asli',
+      reference: article.source,
+      note: article.author ? `Ditulis oleh ${article.author}.` : 'Baca artikel pada situs penerbit.',
+      url: article.url,
+    };
+  }
+
+  private estimateReadTime(html: string): string {
+    const words = html.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+    return `${Math.max(1, Math.ceil(words / 200))} menit`;
   }
 
   private loadClickCounts() {

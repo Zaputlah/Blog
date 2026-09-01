@@ -1,0 +1,59 @@
+<div class="accessibility-menu" data-no-translate>
+  <details #accessibilityPanel>
+    <summary aria-label="Buka pengaturan aksesibilitas" title="Aksesibilitas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="12" cy="4.5" r="2" stroke-width="1.8"></circle>
+        <path d="M5 8.5c4.7 1.7 9.3 1.7 14 0M12 9v11M8.5 20l3.5-6 3.5 6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span>Aksesibilitas</span>
+    </summary>
+
+    <section class="accessibility-panel" aria-label="Pengaturan aksesibilitas">
+      <div class="panel-heading">
+        <div>
+          <strong>Aksesibilitas</strong>
+          <span>Sesuaikan tampilan situs</span>
+        </div>
+        <button type="button" class="close-button" (click)="accessibilityPanel.removeAttribute('open')" aria-label="Tutup pengaturan aksesibilitas">×</button>
+      </div>
+
+      <div class="setting-group">
+        <span class="setting-label">Ukuran teks</span>
+        <div class="text-controls" aria-label="Atur ukuran teks">
+          <button type="button" (click)="changeTextScale(-10)" [disabled]="textScale <= 100" aria-label="Perkecil teks">A−</button>
+          <output aria-live="polite">{{ textScale }}%</output>
+          <button type="button" (click)="changeTextScale(10)" [disabled]="textScale >= 200" aria-label="Perbesar teks">A+</button>
+        </div>
+      </div>
+
+      <button type="button" class="setting-toggle" (click)="toggleHighContrast()" [attr.aria-pressed]="highContrast">
+        <span>
+          <strong>Kontras tinggi</strong>
+          <small>Perjelas teks dan batas elemen</small>
+        </span>
+        <span class="switch" aria-hidden="true"><span></span></span>
+      </button>
+
+      <button type="button" class="setting-toggle" (click)="toggleReducedMotion()" [attr.aria-pressed]="reducedMotion">
+        <span>
+          <strong>Kurangi animasi</strong>
+          <small>Matikan gerakan dan transisi</small>
+        </span>
+        <span class="switch" aria-hidden="true"><span></span></span>
+      </button>
+
+      <button type="button" class="setting-toggle" (click)="toggleSpeechReader()" [attr.aria-pressed]="speechReaderEnabled">
+        <span>
+          <strong>Pembaca teks pilihan</strong>
+          <small>Blok teks, lalu tekan tombol suara</small>
+        </span>
+        <span class="switch" aria-hidden="true"><span></span></span>
+      </button>
+
+      <button type="button" class="reset-button" (click)="reset()">Reset pengaturan</button>
+      <span class="sr-only" aria-live="polite">{{ announcement }}</span>
+    </section>
+  </details>
+
+  <app-speech-reader [enabled]="speechReaderEnabled"></app-speech-reader>
+</div>

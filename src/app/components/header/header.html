@@ -1,13 +1,13 @@
 <header class="sticky top-0 z-40 border-b border-[#dfe8e3] bg-white/95 backdrop-blur">
-  <nav class="page-container py-3">
+  <nav class="page-container py-3" aria-label="Navigasi utama">
     <div class="flex items-center justify-between gap-4">
       <a routerLink="/beranda" class="flex shrink-0 items-center" (click)="closeMobileMenu()">
-        <span class="flex h-16 w-36 shrink-0 items-center justify-start md:h-20 md:w-44">
+        <span class="logo-wrapper flex h-16 w-36 shrink-0 items-center justify-start md:h-20 md:w-44">
           <img src="zaputlah.png" alt="Zaputlah" class="theme-logo h-full w-full object-contain" />
         </span>
       </a>
 
-      <div class="hidden items-center gap-1 xl:flex">
+      <div class="desktop-navigation hidden items-center gap-1 xl:flex">
         <a
           routerLink="/beranda"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
@@ -30,57 +30,71 @@
           Kajian
         </a>
         <a
-          routerLink="/poster"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Poster
-        </a>
-        <a
-          routerLink="/doa"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Doa
-        </a>
-        <a
           routerLink="/quran"
           routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
           class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
         >
           Al-Quran
         </a>
-        <a
-          routerLink="/jadwal-sholat"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Jadwal Sholat
-        </a>
-        <a
-          routerLink="/game"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Game
-        </a>
-        <a
-          routerLink="/quotes"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Quotes
-        </a>
-        <a
-          routerLink="/hadits"
-          routerLinkActive="bg-[#f3f8f5] text-[#123d34]"
-          class="rounded-lg px-3 py-2 text-sm font-semibold text-[#52645f] transition hover:bg-[#f7faf8] hover:text-[#123d34] lg:px-4"
-        >
-          Hadis
-        </a>
+        <div routerLinkActive="more-active" class="more-menu">
+          <details #moreMenu>
+            <summary>
+              Lainnya
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="m6 8 4 4 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+              </svg>
+            </summary>
+            <div class="more-menu-panel">
+              <a routerLink="/poster" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Poster</a>
+              <a routerLink="/doa" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Doa</a>
+              <a routerLink="/jadwal-sholat" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Jadwal Sholat</a>
+              <a routerLink="/game" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Game</a>
+              <a routerLink="/quotes" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Quotes</a>
+              <a routerLink="/hadits" routerLinkActive="active" (click)="moreMenu.removeAttribute('open')">Hadis</a>
+            </div>
+          </details>
+        </div>
       </div>
 
       <div class="flex items-center gap-2">
+        <div class="language-picker" data-no-translate>
+          <details #languageMenu>
+            <summary aria-label="Pilih bahasa">
+              <svg class="language-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke-width="1.8"></circle>
+                <path d="M3.5 12h17M12 3c2.2 2.45 3.35 5.45 3.35 9S14.2 18.55 12 21M12 3C9.8 5.45 8.65 8.45 8.65 12S9.8 18.55 12 21" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+              <ng-container *ngFor="let option of language.languages">
+                <span *ngIf="option.code === language.currentLanguage()" class="current-language">
+                  <strong>{{ option.shortLabel }}</strong>
+                  <span class="current-language-name">{{ option.label }}</span>
+                </span>
+              </ng-container>
+              <svg class="language-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="m6 8 4 4 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+              </svg>
+            </summary>
+
+            <div class="language-menu" role="menu" aria-label="Daftar bahasa">
+              <p>Pilih bahasa</p>
+              <button
+                *ngFor="let option of language.languages"
+                type="button"
+                role="menuitemradio"
+                [attr.aria-checked]="option.code === language.currentLanguage()"
+                [class.active]="option.code === language.currentLanguage()"
+                (click)="selectLanguage(option.code); languageMenu.removeAttribute('open')"
+              >
+                <span class="language-code">{{ option.shortLabel }}</span>
+                <span class="language-name">{{ option.label }}</span>
+                <svg *ngIf="option.code === language.currentLanguage()" viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="m5 10 3 3 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </button>
+            </div>
+          </details>
+        </div>
+
         <button
           type="button"
           (click)="toggleTheme()"
@@ -124,7 +138,7 @@
         <button
           type="button"
           (click)="toggleMobileMenu()"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:bg-[#f7faf8] xl:hidden"
+          class="mobile-menu-button inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#dfe8e3] text-[#123d34] transition hover:bg-[#f7faf8] xl:hidden"
           aria-label="Buka menu"
         >
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,7 +153,7 @@
       </div>
     </div>
 
-    <div *ngIf="isMobileMenuOpen" class="mt-3 grid gap-1 border-t border-[#dfe8e3] pt-3 xl:hidden">
+    <div *ngIf="isMobileMenuOpen" class="mobile-menu-panel mt-3 grid gap-1 border-t border-[#dfe8e3] pt-3 xl:hidden">
       <a
         routerLink="/beranda"
         routerLinkActive="bg-[#f3f8f5] text-[#123d34]"

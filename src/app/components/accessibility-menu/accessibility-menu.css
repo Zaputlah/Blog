@@ -1,0 +1,225 @@
+:host {
+  position: fixed;
+  left: 1.35rem;
+  bottom: 1.35rem;
+  z-index: 70;
+  display: block;
+  width: max-content;
+}
+
+.accessibility-menu {
+  position: relative;
+}
+
+summary {
+  display: flex;
+  min-height: 3.2rem;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+  gap: 0.65rem;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--green) 45%, var(--line));
+  border-radius: 999px;
+  background: var(--panel);
+  padding: 0.75rem 1rem;
+  color: var(--heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  box-shadow: 0 12px 34px var(--shadow-strong);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary:hover,
+details[open] summary {
+  border-color: var(--green);
+  background: var(--hover);
+  transform: translateY(-2px);
+}
+
+summary svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.accessibility-panel {
+  position: absolute;
+  bottom: calc(100% + 0.65rem);
+  left: 0;
+  z-index: 71;
+  width: min(22rem, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--panel);
+  padding: 0.75rem;
+  color: var(--ink);
+  box-shadow: 0 18px 42px var(--shadow-strong);
+}
+
+.panel-heading,
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel-heading {
+  border-bottom: 1px solid var(--line);
+  padding: 0.25rem 0.25rem 0.75rem;
+}
+
+.panel-heading div,
+.setting-toggle > span:first-child {
+  display: grid;
+  gap: 0.15rem;
+  text-align: start;
+}
+
+.panel-heading strong,
+.setting-toggle strong {
+  color: var(--heading);
+  font-size: 0.9rem;
+}
+
+.panel-heading span,
+.setting-toggle small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.close-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.4rem;
+  color: var(--heading);
+  font-size: 1.35rem;
+}
+
+.setting-group {
+  padding: 0.85rem 0.25rem;
+}
+
+.setting-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--heading);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.text-controls {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.text-controls button,
+.text-controls output {
+  display: flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--soft);
+  color: var(--heading);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.text-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.setting-toggle {
+  width: 100%;
+  border-top: 1px solid var(--line);
+  padding: 0.8rem 0.25rem;
+}
+
+.switch {
+  display: flex;
+  width: 2.5rem;
+  height: 1.4rem;
+  flex: none;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--soft);
+  padding: 0.12rem;
+}
+
+.switch span {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.setting-toggle[aria-pressed='true'] .switch {
+  border-color: var(--green);
+  background: var(--chip);
+}
+
+.setting-toggle[aria-pressed='true'] .switch span {
+  background: var(--green);
+  transform: translateX(1.05rem);
+}
+
+:host-context(html[dir='rtl']) .setting-toggle[aria-pressed='true'] .switch span {
+  transform: translateX(-1.05rem);
+}
+
+.reset-button {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.65rem;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.close-button:hover,
+.setting-toggle:hover,
+.reset-button:hover,
+.text-controls button:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+@media (max-width: 420px) {
+  :host {
+    left: 1rem;
+    bottom: 1rem;
+  }
+
+  summary {
+    width: 3.25rem;
+    height: 3.25rem;
+    min-height: 0;
+    padding: 0;
+  }
+
+  summary > span {
+    display: none;
+  }
+
+  .accessibility-panel {
+    position: fixed;
+    top: auto;
+    bottom: 5rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+    max-height: calc(100dvh - 6rem);
+  }
+}
