@@ -182,6 +182,13 @@ app.post('/api/ai/ask', async (req, res) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
     console.error('Tanya Zaputlah gagal:', message.split(':', 1)[0]);
+    if (message === 'AI_SOURCE_SERVICE_ERROR') {
+      res.status(502).json({
+        code: message,
+        message: 'Layanan pencarian sumber sedang bermasalah. Silakan coba lagi beberapa saat.',
+      });
+      return;
+    }
     if (message === 'GEMINI_API_KEY_MISSING') {
       res.status(503).json({
         code: message,

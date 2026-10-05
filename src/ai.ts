@@ -389,10 +389,15 @@ async function retrieveSources(
   const requests: Array<Promise<AiSource[]>> = [];
   if (requested.has('quran')) requests.push(searchEquran(classification.searchQuery, ['ayat']));
   if (requested.has('doa')) requests.push(searchEquran(classification.searchQuery, ['doa']));
-  if (requested.has('hadits')) requests.push(searchHaditsSources(classification.searchQuery));
+  if (requested.has('hadits')) {
+    requests.push(searchHaditsSources(classification.searchQuery, classification.topics));
+  }
   if (requested.has('site')) requests.push(Promise.resolve(searchSiteSources(classification)));
   if (requested.has('schedule')) requests.push(searchPrayerSchedule(question, context));
   const settled = await Promise.allSettled(requests);
+  if (settled.length && settled.every((result) => result.status === 'rejected')) {
+    throw new Error('AI_SOURCE_SERVICE_ERROR');
+  }
   return settled
     .flatMap((result) => (result.status === 'fulfilled' ? result.value : []))
     .sort((a, b) => (b.score || 0) - (a.score || 0))
@@ -453,8 +458,17 @@ function mapEquranSource(item: EquranVectorItem): AiSource | null {
   return null;
 }
 
-async function searchHaditsSources(query: string): Promise<AiSource[]> {
-  const items = await searchHadits(query);
+async function searchHaditsSources(query: string, topics: string[]): Promise<AiSource[]> {
+  const queries = [...new Set([query, ...topics].map((value) =>
+    value.normalize('NFKC').toLocaleLowerCase('id-ID')
+      .replace(/\b(?:carikan|cari|hadis|hadits|tentang|mengenai)\b/g, ' ')
+      .replace(/\s+/g, ' ').trim(),
+  ).filter(Boolean))].slice(0, 3);
+  let items: DailyHadits[] = [];
+  for (const candidate of queries) {
+    items = await searchHadits(candidate);
+    if (items.length) break;
+  }
   return items.slice(0, 4).map((item: DailyHadits) => ({
     id: `hadits-${item.collection}-${item.id}`,
     type: 'hadits',

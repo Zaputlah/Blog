@@ -43,6 +43,12 @@ export async function POST(request: Request): Promise<Response> {
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
     console.error('Tanya Zaputlah gagal:', safeErrorCode(message));
+    if (message === 'AI_SOURCE_SERVICE_ERROR') {
+      return Response.json(
+        { code: message, message: 'Layanan pencarian sumber sedang bermasalah. Silakan coba lagi beberapa saat.' },
+        { status: 502 },
+      );
+    }
     if (message === 'GEMINI_API_KEY_MISSING') {
       return Response.json(
         { code: message, message: 'Gemini API belum dikonfigurasi di server.' },
